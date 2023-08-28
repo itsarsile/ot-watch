@@ -1,6 +1,6 @@
 import { db } from '@/drizzle/db';
 import { User } from '@/drizzle/schema';
-import bcrypt from 'bcryptjs'
+import bcrypt from 'bcryptjs';
 import { NextResponse } from "next/server";
 
 export async function GET() {

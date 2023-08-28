@@ -1,9 +1,10 @@
-import bcrypt from "bcryptjs";
-import { omit } from 'lodash'
 import { eq } from "drizzle-orm";
+import bcrypt from "bcryptjs"
+import { omit } from 'lodash'
 import { db } from "@/drizzle/db";
 import { User } from "@/drizzle/schema";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import { signJwt } from "@/lib/jwt";
 
 export async function POST(request: Request) {
   try {
@@ -21,12 +22,22 @@ export async function POST(request: Request) {
 
     const passwordMatch = await bcrypt.compare(password, user.password)
 
-    if (passwordMatch) {
-        return NextResponse.json({ user: existingUser }, { status: 200 })
-    } else {
+    if (!passwordMatch) {
         return NextResponse.json({ message: 'Password incorrect'}, { status: 401 })
-    }
+    }    
 
+    const userWithoutPassword = omit(user, ['password'])
+    const accessToken = signJwt({user: userWithoutPassword.id}, {
+        expiresIn: '1h'
+    })
+
+    const response =  NextResponse.json({ user: userWithoutPassword }, { status: 200 })
+    response.cookies.set({
+        name: 'jwt',
+        value: accessToken,
+        httpOnly: true,
+    })
+    return response
   } catch (error) {
     console.error("Error:", error);
     return NextResponse.json(
@@ -34,4 +45,9 @@ export async function POST(request: Request) {
       { status: 500 }
     );
   }
+}
+
+export async function GET(request: NextRequest) {
+    const cookiesValue = request.cookies.get('jwt')
+    return NextResponse.json({cookiesValue})
 }
