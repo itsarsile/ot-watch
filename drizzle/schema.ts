@@ -1,6 +1,5 @@
 import { pgTable, pgEnum, varchar, timestamp, text, integer, uniqueIndex, foreignKey, serial, doublePrecision } from "drizzle-orm/pg-core"
 
-import { sql } from "drizzle-orm"
 export const Roles = pgEnum("Roles", ['USER', 'ADMIN', 'SUPER'])
 
 
