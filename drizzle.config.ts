@@ -2,7 +2,8 @@ import type { Config } from "drizzle-kit";
 import "dotenv/config";
 
 export default {
-  schema: "./drizzle/schema.ts",
+  schema: "./lib/schema.ts",
+  out: './drizzle',
   driver: "pg",
   introspect: {
     casing: "preserve",
