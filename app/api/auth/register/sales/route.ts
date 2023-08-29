@@ -1,5 +1,5 @@
 import { db } from "@/drizzle/db";
-import { User, salesProfile } from "@/drizzle/schema";
+import { User, salesProfile } from "@/lib/schema";
 import bcrypt from "bcryptjs";
 import { NextResponse } from "next/server";
 

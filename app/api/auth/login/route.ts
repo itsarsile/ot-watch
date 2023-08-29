@@ -2,7 +2,7 @@ import { eq } from "drizzle-orm";
 import bcrypt from "bcryptjs";
 import { omit } from "lodash";
 import { db } from "@/drizzle/db";
-import { User, adminProfile, salesProfile } from "@/drizzle/schema";
+import { User, adminProfile, salesProfile } from "@/lib/schema";
 import { NextRequest, NextResponse } from "next/server";
 import { signJwt } from "@/lib/jwt";
 
