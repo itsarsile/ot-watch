@@ -1,5 +1,6 @@
 import NextAuth, { NextAuthOptions, Session } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import 'dotenv/config'
 
 export const authOptions: NextAuthOptions = {
   pages: {
@@ -27,7 +28,7 @@ export const authOptions: NextAuthOptions = {
         // e.g. return { id: 1, name: 'J Smith', email: 'jsmith@example.com' }
         // You can also use the `req` object to obtain additional parameters
         // (i.e., the request IP address)
-        const res = await fetch("http://localhost:3000/api/auth/login", {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/login`, {
           method: "POST",
           body: JSON.stringify({
             username: credentials?.username,
