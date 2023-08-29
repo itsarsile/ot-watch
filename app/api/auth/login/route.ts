@@ -1,8 +1,8 @@
 import { eq } from "drizzle-orm";
-import bcrypt from "bcryptjs"
-import { omit } from 'lodash'
+import bcrypt from "bcryptjs";
+import { omit } from "lodash";
 import { db } from "@/drizzle/db";
-import { User } from "@/drizzle/schema";
+import { User, adminProfile, salesProfile } from "@/drizzle/schema";
 import { NextRequest, NextResponse } from "next/server";
 import { signJwt } from "@/lib/jwt";
 
@@ -16,28 +16,57 @@ export async function POST(request: Request) {
       .from(User)
       .where(eq(User.username, username));
 
-    if (existingUser.length === 0) return NextResponse.json({ message: "User not found" }, { status: 400 });
+    if (existingUser.length === 0)
+      return NextResponse.json({ message: "User not found" }, { status: 400 });
 
-    const user = existingUser[0]
 
-    const passwordMatch = await bcrypt.compare(password, user.password)
+    const passwordMatch = await bcrypt.compare(
+      password,
+      existingUser[0].password
+    );
 
     if (!passwordMatch) {
-        return NextResponse.json({ message: 'Password incorrect'}, { status: 401 })
-    }    
+      return NextResponse.json(
+        { message: "Password incorrect" },
+        { status: 401 }
+      );
+    }
 
-    const userWithoutPassword = omit(user, ['password'])
-    const accessToken = signJwt({user: userWithoutPassword.id}, {
-        expiresIn: '1h'
-    })
+    if (existingUser[0].role === "ADMIN") {
+      const user = await db
+        .select({
+          id: User.id,
+          username: User.username,
+          avatar: User.avatarUrl,
+          role: User.role,
+          name: adminProfile.name,
+          nik: adminProfile.nik,
+          phone: adminProfile.phoneNumber
+        })
+        .from(User)
+        .where(eq(User.id, existingUser[0].id))
+        .leftJoin(adminProfile, eq(adminProfile.userId, existingUser[0].id));
 
-    const response =  NextResponse.json({ user: userWithoutPassword }, { status: 200 })
-    response.cookies.set({
-        name: 'jwt',
-        value: accessToken,
-        httpOnly: true,
-    })
-    return response
+      return NextResponse.json({ user: user[0] }, { status: 200 });
+    }
+
+    const user = await db
+      .select({
+        id: User.id,
+        username: User.username,
+        avatar: User.avatarUrl,
+        role: User.role,
+        name: salesProfile.name,
+        kcontact: salesProfile.kcontact,
+        phone: salesProfile.phoneNumber,
+      })
+      .from(User)
+      .where(eq(User.id, existingUser[0].id))
+      .leftJoin(salesProfile, eq(salesProfile.userId, existingUser[0].id));
+
+    console.log("🚀 ~ file: route.ts:58 ~ POST ~ user:", user)
+
+    return NextResponse.json({ user: user[0] }, { status: 200 });
   } catch (error) {
     console.error("Error:", error);
     return NextResponse.json(
@@ -48,6 +77,6 @@ export async function POST(request: Request) {
 }
 
 export async function GET(request: NextRequest) {
-    const cookiesValue = request.cookies.get('jwt')
-    return NextResponse.json({cookiesValue})
+  const cookiesValue = request.cookies.get("jwt");
+  return NextResponse.json({ cookiesValue });
 }

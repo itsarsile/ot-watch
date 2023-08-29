@@ -1,4 +1,4 @@
-import { pgTable, pgEnum, varchar, timestamp, text, integer, uniqueIndex, serial, foreignKey } from "drizzle-orm/pg-core"
+import { pgTable, pgEnum, varchar, timestamp, text, integer, uniqueIndex, foreignKey, serial, doublePrecision } from "drizzle-orm/pg-core"
 
 import { sql } from "drizzle-orm"
 export const Roles = pgEnum("Roles", ['USER', 'ADMIN', 'SUPER'])
@@ -15,6 +15,21 @@ export const _prisma_migrations = pgTable("_prisma_migrations", {
 	applied_steps_count: integer("applied_steps_count").default(0).notNull(),
 });
 
+export const adminProfile = pgTable("adminProfile", {
+	id: serial("id").primaryKey().notNull(),
+	name: text("name").notNull(),
+	nik: integer("nik").notNull(),
+	phoneNumber: text("phoneNumber"),
+	createdAt: timestamp("createdAt", { precision: 3, mode: 'string' }).defaultNow(),
+	userId: integer("userId").notNull().references(() => User.id, { onDelete: "restrict", onUpdate: "cascade" } ),
+},
+(table) => {
+	return {
+		nik_key: uniqueIndex("adminProfile_nik_key").on(table.nik),
+		userId_key: uniqueIndex("adminProfile_userId_key").on(table.userId),
+	}
+});
+
 export const User = pgTable("User", {
 	id: serial("id").primaryKey().notNull(),
 	username: text("username").notNull(),
@@ -29,36 +44,6 @@ export const User = pgTable("User", {
 	}
 });
 
-export const adminProfile = pgTable("adminProfile", {
-	id: serial("id").primaryKey().notNull(),
-	name: text("name").notNull(),
-	nik: integer("nik").notNull(),
-	phoneNumber: integer("phoneNumber").notNull(),
-	createdAt: timestamp("createdAt", { precision: 3, mode: 'string' }).defaultNow().notNull(),
-	userId: integer("userId").notNull().references(() => User.id, { onDelete: "restrict", onUpdate: "cascade" } ),
-},
-(table) => {
-	return {
-		nik_key: uniqueIndex("adminProfile_nik_key").on(table.nik),
-		userId_key: uniqueIndex("adminProfile_userId_key").on(table.userId),
-	}
-});
-
-export const salesProfile = pgTable("salesProfile", {
-	id: serial("id").primaryKey().notNull(),
-	name: text("name").notNull(),
-	kcontact: text("kcontact").notNull(),
-	phoneNumber: integer("phoneNumber").notNull(),
-	createdAt: timestamp("createdAt", { precision: 3, mode: 'string' }).defaultNow().notNull(),
-	userId: integer("userId").notNull().references(() => User.id, { onDelete: "restrict", onUpdate: "cascade" } ),
-},
-(table) => {
-	return {
-		kcontact_key: uniqueIndex("salesProfile_kcontact_key").on(table.kcontact),
-		userId_key: uniqueIndex("salesProfile_userId_key").on(table.userId),
-	}
-});
-
 export const superProfile = pgTable("superProfile", {
 	id: serial("id").primaryKey().notNull(),
 	name: text("name").notNull(),
@@ -68,5 +53,30 @@ export const superProfile = pgTable("superProfile", {
 (table) => {
 	return {
 		userId_key: uniqueIndex("superProfile_userId_key").on(table.userId),
+	}
+});
+
+export const userAttendance = pgTable("userAttendance", {
+	id: serial("id").primaryKey().notNull(),
+	checkInTime: timestamp("checkInTime", { precision: 3, mode: 'string' }).notNull(),
+	checkOutTime: timestamp("checkOutTime", { precision: 3, mode: 'string' }),
+	latitude: doublePrecision("latitude"),
+	longitude: doublePrecision("longitude"),
+	salesProfileId: integer("salesProfileId").references(() => salesProfile.id, { onDelete: "set null", onUpdate: "cascade" } ),
+	photo: text("photo"),
+});
+
+export const salesProfile = pgTable("salesProfile", {
+	id: serial("id").primaryKey().notNull(),
+	name: text("name").notNull(),
+	kcontact: text("kcontact").notNull(),
+	phoneNumber: text("phoneNumber").notNull(),
+	createdAt: timestamp("createdAt", { precision: 3, mode: 'string' }).defaultNow(),
+	userId: integer("userId").notNull().references(() => User.id, { onDelete: "restrict", onUpdate: "cascade" } ),
+},
+(table) => {
+	return {
+		kcontact_key: uniqueIndex("salesProfile_kcontact_key").on(table.kcontact),
+		userId_key: uniqueIndex("salesProfile_userId_key").on(table.userId),
 	}
 });

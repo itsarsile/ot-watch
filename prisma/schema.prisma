@@ -21,23 +21,24 @@ model User {
 }
 
 model adminProfile {
-  id          Int      @id @default(autoincrement())
+  id          Int       @id @default(autoincrement())
   name        String
-  nik         Int      @unique
-  phoneNumber Int
-  createdAt   DateTime @default(now())
-  userId      Int      @unique
-  user        User     @relation(fields: [userId], references: [id])
+  nik         Int       @unique
+  phoneNumber String?
+  createdAt   DateTime? @default(now())
+  userId      Int       @unique
+  user        User      @relation(fields: [userId], references: [id])
 }
 
 model salesProfile {
-  id          Int      @id @default(autoincrement())
-  name        String
-  kcontact    String   @unique
-  phoneNumber Int
-  createdAt   DateTime @default(now())
-  userId      Int      @unique
-  user        User     @relation(fields: [userId], references: [id])
+  id             Int              @id @default(autoincrement())
+  name           String
+  kcontact       String           @unique
+  phoneNumber    String
+  createdAt      DateTime?         @default(now())
+  userId         Int              @unique
+  user           User             @relation(fields: [userId], references: [id])
+  userAttendance userAttendance[]
 }
 
 model superProfile {
@@ -46,6 +47,17 @@ model superProfile {
   phoneNumber Int
   userId      Int    @unique
   user        User   @relation(fields: [userId], references: [id])
+}
+
+model userAttendance {
+  id             Int           @id @default(autoincrement())
+  checkInTime    DateTime
+  checkOutTime   DateTime?
+  latitude       Float?
+  longitude      Float?
+  photo          String?
+  salesProfile   salesProfile? @relation(fields: [salesProfileId], references: [id])
+  salesProfileId Int?
 }
 
 enum Roles {
