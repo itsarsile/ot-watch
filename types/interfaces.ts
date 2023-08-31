@@ -4,3 +4,20 @@ export interface User {
   username?: string;
   accessToken: string;
 }
+
+
+export interface Disclosure {
+  opened: boolean;
+  close: () => void;
+}
+
+export interface ISFRegistrationModal extends Disclosure {
+} 
+
+export interface ISFListModal extends Disclosure {
+  
+}
+
+export interface IMapDashboard extends Disclosure {
+  
+}

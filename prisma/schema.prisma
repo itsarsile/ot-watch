@@ -9,15 +9,16 @@ datasource db {
 }
 
 model User {
-  id           Int           @id @default(autoincrement())
-  username     String        @unique
-  password     String
-  avatarUrl    String?
-  role         Roles
-  createdAt    DateTime      @default(now())
-  adminProfile adminProfile?
-  salesProfile salesProfile?
-  superProfile superProfile?
+  id                Int                @id @default(autoincrement())
+  username          String             @unique
+  password          String
+  avatarUrl         String?
+  role              Roles
+  createdAt         DateTime           @default(now())
+  adminProfile      adminProfile?
+  salesProfile      salesProfile?
+  superVisorProfile superVisorProfile?
+  superAdminProfile superAdminProfile?
 }
 
 model adminProfile {
@@ -31,17 +32,31 @@ model adminProfile {
 }
 
 model salesProfile {
+  id                  Int                @id @default(autoincrement())
+  name                String
+  kcontact            String             @unique
+  phoneNumber         String
+  createdAt           DateTime?          @default(now())
+  userId              Int                @unique
+  user                User               @relation(fields: [userId], references: [id])
+  userAttendance      userAttendance[]
+  superVisorProfile   superVisorProfile? @relation(fields: [superVisorProfileId], references: [id])
+  superVisorProfileId Int?
+}
+
+model superVisorProfile {
   id             Int              @id @default(autoincrement())
   name           String
   kcontact       String           @unique
   phoneNumber    String
-  createdAt      DateTime?         @default(now())
+  createdAt      DateTime?        @default(now())
   userId         Int              @unique
   user           User             @relation(fields: [userId], references: [id])
   userAttendance userAttendance[]
+  salesForces    salesProfile[]
 }
 
-model superProfile {
+model superAdminProfile {
   id          Int    @id @default(autoincrement())
   name        String
   phoneNumber Int
@@ -50,14 +65,16 @@ model superProfile {
 }
 
 model userAttendance {
-  id             Int           @id @default(autoincrement())
-  checkInTime    DateTime
-  checkOutTime   DateTime?
-  latitude       Float?
-  longitude      Float?
-  photo          String?
-  salesProfile   salesProfile? @relation(fields: [salesProfileId], references: [id])
-  salesProfileId Int?
+  id                  Int                @id @default(autoincrement())
+  checkInTime         DateTime
+  checkOutTime        DateTime?
+  latitude            Float?
+  longitude           Float?
+  photo               String?
+  salesProfile        salesProfile?      @relation(fields: [salesProfileId], references: [id])
+  salesProfileId      Int?
+  superVisorProfile   superVisorProfile? @relation(fields: [superVisorProfileId], references: [id])
+  superVisorProfileId Int?
 }
 
 enum Roles {
