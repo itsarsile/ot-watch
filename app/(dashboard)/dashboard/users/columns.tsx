@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { IconDotsVertical } from "@tabler/icons-react";
 import { ColumnDef } from "@tanstack/react-table";
+import {ArrowUpDown} from "lucide-react";
 
 export type Users = {
   userId: number;
@@ -40,7 +41,17 @@ export const columns: ColumnDef<Users>[] = [
   },
   {
     accessorKey: "kcontact",
-    header: "K-Contact",
+    header: ({ column }) => {
+      return (
+          <Button
+            variant='ghost'
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+          K-Contact
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+      )
+    },
   },
   {
     accessorKey: "phoneNumber",
@@ -68,7 +79,11 @@ export const columns: ColumnDef<Users>[] = [
               Copy K-Contact
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>View customer</DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => console.log(user.userId)}
+            >
+              Edit
+            </DropdownMenuItem>
             <DropdownMenuItem>View payment details</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

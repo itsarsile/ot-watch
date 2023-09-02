@@ -18,7 +18,6 @@ export const MapsComponents = () => {
 
   return (
     <>
-      <Title order={4} className="my-5">Lokasi Open Table</Title>
         <Map
           doubleClickZoom={false}
           onDblClick={handleClick}
@@ -28,7 +27,7 @@ export const MapsComponents = () => {
             zoom: 10,
           }}
           mapStyle="https://4flsvk-8080.csb.app/styles/basic-preview/style.json"
-          style={{ width: "100%", height: "300px" }}
+          style={{ width: "100%", height: "80vh" }}
           attributionControl={false}
         >
           <Marker
