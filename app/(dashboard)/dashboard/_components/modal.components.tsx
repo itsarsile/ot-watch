@@ -1,4 +1,5 @@
 "use client";
+import { fetcher } from "@/lib/fetcher";
 import {
   ISFListModal,
   ISFRegistrationModal,
@@ -6,36 +7,45 @@ import {
 } from "@/types/interfaces";
 import {
   Button,
+  Group,
   Modal,
   MultiSelect,
   NativeSelect,
   PasswordInput,
   Stack,
+  Table,
   TextInput,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { useDisclosure } from "@mantine/hooks";
-import MapPages from "../[username]/@maps/pages";
-
+import { useState } from "react";
+import { mutate } from "swr";
 export const SFRegistrationModal = ({
   opened,
   close,
+  supervisors,
 }: ISFRegistrationModal) => {
+  console.log("🚀 ~ file: modal.components.tsx:41 ~ supervisors:", supervisors);
+  const [loading, setLoading] = useState(false);
+
+  const initialFormValues = {
+    username: "",
+    password: "",
+    name: "",
+    branch: "",
+    agency: "",
+    kcontact: "",
+    type: "Sales Supervisor",
+    supervisors: "",
+    phoneNumber: "",
+  };
+
   const form = useForm({
-    initialValues: {
-      username: "",
-      password: "",
-      name: "",
-      kcontact: "",
-      type: "",
-      phoneNumber: "",
-    },
+    initialValues: initialFormValues,
   });
-
-  console.log(form.values);
-
+  console.log(form.values.supervisors);
   const handleRegister = form.onSubmit(async (values, _event) => {
     try {
+      setLoading(true);
       _event.preventDefault();
       const response = fetch("/api/auth/register/sales", {
         method: "POST",
@@ -48,16 +58,17 @@ export const SFRegistrationModal = ({
     } catch (error) {
       console.error(error);
     } finally {
+      mutate("/api/users/supervisor");
+      form.reset();
+      setLoading(false);
       close();
     }
   });
+
+  console.log(form.values);
+
   return (
-    <Modal
-      opened={opened}
-      onClose={close}
-      title="Registrasi Akun SF"
-      transitionProps={{ transition: "slide-up", duration: 500 }}
-    >
+    <Modal opened={opened} onClose={close} size="lg" title="Registrasi Akun SF">
       <form onSubmit={handleRegister}>
         <Stack>
           <TextInput
@@ -83,9 +94,10 @@ export const SFRegistrationModal = ({
               <MultiSelect
                 searchable
                 maxSelectedValues={1}
-                data={["Hadyan Arif - SPAFK02", "Hari Dirgantara - SPAFK05"]}
+                data={supervisors}
                 label="Pilih Supervisor"
                 required
+                {...form.getInputProps("supervisors")}
               />
             </>
           )}
@@ -102,13 +114,31 @@ export const SFRegistrationModal = ({
             {...form.getInputProps("kcontact")}
             required
           />
+          <Group grow>
+            <TextInput
+              label="Branch"
+              placeholder="Masukkan branch SF..."
+              {...form.getInputProps("branch")}
+              required
+            />
+            <TextInput
+              label="Agency"
+              placeholder="Masukkan agency SF..."
+              {...form.getInputProps("agency")}
+              required
+            />
+          </Group>
           <TextInput
             label="Nomor Telepon"
             placeholder="Masukkan nomor telepon SF..."
             {...form.getInputProps("phoneNumber")}
             required
           />
-          <Button type="submit" variant="default">
+          <Button
+            type="submit"
+            variant="default"
+            loading={loading ? true : false}
+          >
             Daftar
           </Button>
         </Stack>
@@ -125,15 +155,17 @@ export const SFListModal = ({ opened, close }: ISFListModal) => {
       onClose={close}
       title="Daftar Sales Force"
     >
-      Hello
+      <Table>
+        <thead>
+          <tr>
+            <th>Nama</th>
+            <th>K-Contact</th>
+            <th>Agency</th>
+            <th>Branch</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+      </Table>
     </Modal>
   );
-};
-
-export const MapDashboardModal = ({ opened, close }: IMapDashboard) => {
-  return (
-    <Modal fullScreen opened={opened} onClose={close} title="Map">
-      <MapPages />
-    </Modal>
-  )
 };

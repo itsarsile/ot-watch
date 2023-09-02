@@ -12,6 +12,7 @@ export interface Disclosure {
 }
 
 export interface ISFRegistrationModal extends Disclosure {
+  supervisors: [],
 } 
 
 export interface ISFListModal extends Disclosure {

@@ -21,7 +21,7 @@ interface INavigationProps {
   username?: string;
 }
 
-export const NavigationBar = ({
+export const HeaderBar = ({
   name,
   avatar,
   role,

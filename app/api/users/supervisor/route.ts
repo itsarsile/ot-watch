@@ -4,9 +4,17 @@ import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    const supervisors = await db.select().from(superVisorProfile)
-    console.log("🚀 ~ file: route.ts:8 ~ GET ~ response:", supervisors)
-    return NextResponse.json({supervisors, message: 'Fetching supervisor successfully' }, {status: 200});
+    const supervisors = await db
+      .select({
+        userId: superVisorProfile.userId,
+        name: superVisorProfile.name,
+        kcontact: superVisorProfile.kcontact,
+      })
+    .from(superVisorProfile);
+    return NextResponse.json(
+      { supervisors, message: "Fetching supervisor successfully" },
+      { status: 200 }
+    );
   } catch (error) {
     return NextResponse.json(
       { message: "Error fetching supervisor data" },

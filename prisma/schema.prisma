@@ -3,9 +3,9 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  relationMode = "prisma"
 }
 
 model User {
@@ -36,6 +36,9 @@ model salesProfile {
   name                String
   kcontact            String             @unique
   phoneNumber         String
+  agency              String
+  branch              String
+  status              Status?
   createdAt           DateTime?          @default(now())
   userId              Int                @unique
   user                User               @relation(fields: [userId], references: [id])
@@ -49,6 +52,9 @@ model superVisorProfile {
   name           String
   kcontact       String           @unique
   phoneNumber    String
+  agency         String
+  branch         String
+  status         Status?
   createdAt      DateTime?        @default(now())
   userId         Int              @unique
   user           User             @relation(fields: [userId], references: [id])
@@ -77,8 +83,17 @@ model userAttendance {
   superVisorProfileId Int?
 }
 
+
 enum Roles {
-  SUPER
+  SUPERADMIN
+  SUPERVISOR
   ADMIN
   USER
+}
+
+enum Status {
+  INACTIVE
+  ACTIVE
+  SUSPENDED
+  DELETED
 }

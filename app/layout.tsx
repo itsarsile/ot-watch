@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import { getServerSession } from "next-auth";
 import { Inter } from "next/font/google";
 import Providers from "./_components/Providers";
-import { NavigationBar } from "./_components/navigation.components";
 import { authOptions } from "./api/auth/[...nextauth]/route";
 import "./globals.css";
+import NextTopLoader from 'nextjs-toploader'
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -18,12 +18,12 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const session = await getServerSession(authOptions);
   return (
     <html lang="en">
       <body className={inter.className}>
+        <NextTopLoader />
         <Providers>
-          {session && <NavigationBar name={session?.user?.name} username={session?.user?.username} role={session?.user?.role}/>}
+          {/* {session && <NavigationBar name={session?.user?.name} username={session?.user?.username} role={session?.user?.role}/>} */}
           {children}
         </Providers>
       </body>

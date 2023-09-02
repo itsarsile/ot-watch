@@ -2,9 +2,10 @@ import { eq } from "drizzle-orm";
 import bcrypt from "bcryptjs";
 import { omit } from "lodash";
 import { db } from "@/drizzle/db";
-import { User, adminProfile, salesProfile } from "@/lib/schema";
+import { User, adminProfile, salesProfile } from "@/drizzle/schema";
 import { NextRequest, NextResponse } from "next/server";
 import { signJwt } from "@/lib/jwt";
+import { superVisorProfile } from "@/drizzle/schema";
 
 export async function POST(request: Request) {
   try {
@@ -18,7 +19,6 @@ export async function POST(request: Request) {
 
     if (existingUser.length === 0)
       return NextResponse.json({ message: "User not found" }, { status: 400 });
-
 
     const passwordMatch = await bcrypt.compare(
       password,
@@ -41,12 +41,31 @@ export async function POST(request: Request) {
           role: User.role,
           name: adminProfile.name,
           nik: adminProfile.nik,
-          phone: adminProfile.phoneNumber
+          phone: adminProfile.phoneNumber,
         })
         .from(User)
         .where(eq(User.id, existingUser[0].id))
         .leftJoin(adminProfile, eq(adminProfile.userId, existingUser[0].id));
 
+      return NextResponse.json({ user: user[0] }, { status: 200 });
+    }
+
+    if (existingUser[0].role === "USER") {
+      const user = await db
+        .select({
+          id: User.id,
+          username: User.username,
+          avatar: User.avatarUrl,
+          role: User.role,
+          branch: salesProfile.branch,
+          agency: salesProfile.agency,
+          name: salesProfile.name,
+          kcontact: salesProfile.kcontact,
+          phone: salesProfile.phoneNumber,
+        })
+        .from(User)
+        .where(eq(User.id, existingUser[0].id))
+        .leftJoin(salesProfile, eq(salesProfile.userId, existingUser[0].id));
       return NextResponse.json({ user: user[0] }, { status: 200 });
     }
 
@@ -56,16 +75,18 @@ export async function POST(request: Request) {
         username: User.username,
         avatar: User.avatarUrl,
         role: User.role,
-        name: salesProfile.name,
-        kcontact: salesProfile.kcontact,
-        phone: salesProfile.phoneNumber,
+        branch: superVisorProfile.branch,
+        agency: superVisorProfile.agency,
+        name: superVisorProfile.name,
+        kcontact: superVisorProfile.kcontact,
+        phone: superVisorProfile.phoneNumber,
       })
       .from(User)
       .where(eq(User.id, existingUser[0].id))
-      .leftJoin(salesProfile, eq(salesProfile.userId, existingUser[0].id));
-
-    console.log("🚀 ~ file: route.ts:58 ~ POST ~ user:", user)
-
+      .leftJoin(
+        superVisorProfile,
+        eq(superVisorProfile.userId, existingUser[0].id)
+      );
     return NextResponse.json({ user: user[0] }, { status: 200 });
   } catch (error) {
     console.error("Error:", error);
