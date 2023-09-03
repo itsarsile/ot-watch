@@ -18,7 +18,7 @@ import Script from "next/script";
 import "@/public/css/maplibre.css";
 
 import { useGeolocated } from "react-geolocated";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 export const UserCards = ({ userData }: any) => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -47,34 +47,59 @@ export const UserCards = ({ userData }: any) => {
 };
 
 const UserAttendanceModal = ({ opened, close }: Disclosure) => {
-    const [location, setLocation] = useState({
-        latitude: 0,
-        longitude: 0,
-    })
-    console.log("🚀 ~ file: cards.components.tsx:51 ~ UserAttendanceModal ~ location:", location)
+  const [location, setLocation] = useState({
+    latitude: 0,
+    longitude: 0,
+  });
+  const [address, setAddress] = useState("");
 
-    const getLocation = () => {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition((position) => {
-                setLocation({
-                    latitude: position.coords.latitude,
-                    longitude: position.coords.longitude,
-                })
-            }),
-            (error: any) => {
-                console.error("Error getting location:", error)
-            }
-        } else {
-            console.error("Geolocation is not supported by this browser")
-        }
+  const getLocation = useCallback(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition((position) => {
+        setLocation({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+        });
+
+        convertLatLongToAddress(
+          position.coords.latitude,
+          position.coords.longitude
+        );
+      }),
+        (error: any) => {
+          console.error("Error getting location:", error);
+        };
+    } else {
+      console.error("Geolocation is not supported by this browser");
     }
+  }, []);
 
-    useEffect(() => {
-        // Get the user's location when the modal is opened
-        if (opened) {
-          getLocation();
-        }
-      }, [opened]);
+  const convertLatLongToAddress = async (
+    latitude: number,
+    longitude: number
+  ) => {
+    const apiKey = process.env.NEXT_PUBLIC_GOOGLE_GEO_API_KEY;
+    const apiUrl = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${apiKey}`;
+
+    try {
+      const response = await fetch(apiUrl);
+      const data = await response.json();
+      if (data.results.length > 0) {
+        setAddress(data.results[0].formatted_address);
+      } else {
+        setAddress("Address not found");
+      }
+    } catch (error) {
+      console.error("Error converting lat/long to address:", error);
+      setAddress("Address not found");
+    }
+  };
+
+  useEffect(() => {
+    if (opened) {
+      getLocation();
+    }
+  }, [opened, getLocation]);
 
   return (
     <>
@@ -89,10 +114,13 @@ const UserAttendanceModal = ({ opened, close }: Disclosure) => {
             zoom: 10,
           }}
         >
-            <Marker longitude={location.longitude} latitude={location.latitude}></Marker>
+          <Marker
+            longitude={location.longitude}
+            latitude={location.latitude}
+          ></Marker>
         </Map>
-
-            <Button onClick={getLocation}>Ambil Lokasi Terkini</Button>
+          <p>Address: {address}</p>
+        <Button onClick={getLocation}>Ambil Lokasi Terkini</Button>
       </Modal>
       <Script src="https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.js" />
     </>
