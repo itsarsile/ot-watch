@@ -18,8 +18,8 @@ import Script from "next/script";
 import "@/public/css/maplibre.css";
 
 import { useGeolocated } from "react-geolocated";
-import { useCallback, useEffect, useState } from "react";
-
+import { useCallback, useEffect, useRef, useState } from "react";
+import Webcam from "react-webcam";
 export const UserCards = ({ userData }: any) => {
   const [opened, { open, close }] = useDisclosure(false);
   return (
@@ -119,10 +119,62 @@ const UserAttendanceModal = ({ opened, close }: Disclosure) => {
             latitude={location.latitude}
           ></Marker>
         </Map>
-          <p>Address: {address}</p>
-        <Button onClick={getLocation}>Ambil Lokasi Terkini</Button>
+        <Card className="bg-transparent border-white my-5">
+          <CardHeader>
+            <CardTitle className="text-lg">Lokasi Open Table</CardTitle>
+          </CardHeader>
+          <CardContent>{address}</CardContent>
+        </Card>
+        <SelfieComponent />
       </Modal>
       <Script src="https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.js" />
     </>
+  );
+};
+
+const SelfieComponent = () => {
+  const webcamRef = useRef<Webcam | null>(null);
+  const [imgSrc, setImgSrc] = useState<string | null>(null);
+  const [cameraEnabled, setCameraEnabled] = useState(true);
+
+  console.log(
+    "🚀 ~ file: cards.components.tsx:141 ~ SelfieComponent ~ imgSrc:",
+    imgSrc
+  );
+
+  const capture = useCallback(() => {
+    const imageSrc = webcamRef.current?.getScreenshot();
+    if (imageSrc) {
+        setImgSrc(imageSrc)
+        setCameraEnabled(false);
+    }
+  }, [webcamRef, setImgSrc]);
+
+  return (
+    <div>
+      {cameraEnabled ? (
+        <Webcam ref={(ref) => { webcamRef.current = ref}} screenshotFormat="image/jpeg" videoConstraints={{
+            facingMode: "user"
+        }}/>
+      ) : null}
+      {cameraEnabled && <Button onClick={capture} className="mt-5">Capture</Button>}
+      {imgSrc && (
+        <div>
+          <img src={imgSrc} alt="Captured" />
+          {/* Add a button to allow retaking a photo if needed */}
+          <div className="flex gap-2 mt-5">
+            <Button
+              onClick={() => {
+                setImgSrc(null);
+                setCameraEnabled(true);
+              }}
+            >
+              Retake
+            </Button>
+            <Button>Upload</Button>
+          </div>
+        </div>
+      )}
+    </div>
   );
 };
