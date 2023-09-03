@@ -1,10 +1,9 @@
 import { db } from "@/drizzle/db";
 import { User } from "@/drizzle/schema";
-import { eq, not, sql } from "drizzle-orm";
+import { eq, not } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
-import { createEdgeRouter, createRouter } from "next-connect";
 
-export async function GET(request: NextRequest) {
+export async function GET(request: NextRequest, response: NextResponse) {
   try {
     const users = await db.query.User.findMany({
       where: not(eq(User.role, "ADMIN")),

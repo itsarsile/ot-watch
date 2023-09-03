@@ -1,11 +1,12 @@
-import { getServerSession } from "next-auth";
 import { UsersActions } from "../_components/button.components";
 import { columns } from "./columns";
 import { DataTable } from "./data-table";
-import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
 
 async function getUsersData() {
-  const res = await fetch(`http://localhost:3000/api/users`, { cache: 'no-cache'});
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users`, {
+    headers: { Cookie: cookies().toString() },
+  });
   if (!res.ok) {
     throw new Error("Failed to fetch users data");
   }
@@ -14,7 +15,6 @@ async function getUsersData() {
 
 async function UsersPage() {
   const data = await getUsersData();
-  console.log("🚀 ~ file: page.tsx:17 ~ UsersPage ~ data:", data)
   return (
     <div className="flex flex-col gap-5 ">
       <UsersActions />

@@ -12,7 +12,10 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { signIn } from "next-auth/react";
+import { useState } from "react";
 function LoginForm() {
+
+  const [loading, setLoading] = useState(false)
 
   const form = useForm({
     initialValues: {
@@ -22,6 +25,7 @@ function LoginForm() {
   });
   const handleLogin = form.onSubmit(async (values, _event) => {
     try {
+      setLoading(true)
       _event.preventDefault();
       await signIn("credentials", {
         username: values.username,
@@ -29,6 +33,8 @@ function LoginForm() {
       });
     } catch (error) {
       console.error(error);
+    } finally {
+      setLoading(false)
     }
   });
   return (
@@ -52,7 +58,7 @@ function LoginForm() {
                   placeholder="Masukkan password..."
                   required
                 />
-                <Button variant="default" type="submit">
+                <Button variant="default" type="submit" loading={loading ? true : false}>
                   Login
                 </Button>
               </Stack>
