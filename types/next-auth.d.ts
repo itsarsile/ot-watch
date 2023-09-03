@@ -10,12 +10,14 @@ declare module "next-auth" {
       username: string,
       avatar: string,
       role: string,
+      kcontact: string,
       nik: number,
       phone: string,
     }
   }
   interface User extends DefaultUser {
     id: number,
+    name: string,
     role: string,
   }
 }
@@ -25,6 +27,8 @@ declare module "next-auth/jwt" {
     id: number,
     username: string,
     name: string,
-    role: string
+    role: string,
+    kcontact?: string,
+    nik?: string,
   }
 }

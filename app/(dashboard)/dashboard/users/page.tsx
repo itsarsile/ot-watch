@@ -6,6 +6,8 @@ import { cookies } from "next/headers";
 async function getUsersData() {
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users`, {
     headers: { Cookie: cookies().toString() },
+    next: { revalidate: 3600 },
+    cache: 'no-store'
   });
   if (!res.ok) {
     throw new Error("Failed to fetch users data");

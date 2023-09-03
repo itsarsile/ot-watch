@@ -83,7 +83,12 @@ export default function DashboardShell(props: { children: React.ReactNode }) {
 
   const UserMenu = [
     {
-      label: "Dashboard", icon: IconGauge,
+      label: "Dashboard",
+      icon: IconGauge,
+      links: [
+        { label: "Overview", link: `/dashboard/${data?.user?.username}` },
+        { label: "Daily Report", link: `/dashboard/dailyreport/${data?.user?.username}`}
+      ],
     },
   ]
 

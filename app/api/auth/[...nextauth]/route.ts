@@ -38,7 +38,6 @@ export const authOptions: NextAuthOptions = {
         });
 
         const user = await res.json();
-        // console.log("🚀 ~ file: route.ts:40 ~ authorize ~ user:", user);
 
         // If no error and we have user data, return it
         if (res.ok && user) {
@@ -51,7 +50,6 @@ export const authOptions: NextAuthOptions = {
   ],
   callbacks: {
     async jwt({ token, user }) {
-      // console.log("🚀 ~ file: route.ts:53 ~ jwt ~ user:", {user, token});
 
       if (user) {
         const u = user as unknown as any
@@ -61,14 +59,15 @@ export const authOptions: NextAuthOptions = {
           id: u.user.id, 
           name: u.user.name,
           username: u.user.username,
-          role: u.user.role
+          role: u.user.role,
+          nik: u.user.nik,
+          kcontact: u.user.kcontact,
         };
       }
       return token;
     },
     // If you want to use the role in client components
     async session({ session, token }) {
-      // console.log("🚀 ~ file: route.ts:59 ~ session ~ token:", {token, session});
       return {
         ...session, 
           user: {
@@ -76,7 +75,9 @@ export const authOptions: NextAuthOptions = {
             id: token.id,
             role: token.role,
             username: token.username,
-            name: token.name
+            name: token.name,
+            kcontact: token.kcontact,
+            nik: token.nik
           }
         }
     },
