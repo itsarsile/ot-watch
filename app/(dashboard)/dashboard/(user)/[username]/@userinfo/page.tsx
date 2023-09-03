@@ -16,8 +16,7 @@ async function UserInfo() {
   const userId = session?.user.id
   const user = await getUserData(Number(userId))
 
-  console.log("🚀 ~ file: page.tsx:17 ~ UserInfo ~ user:", user)
-  return (
+  return (  
     <UserCards userData={user}/>
   )
 }

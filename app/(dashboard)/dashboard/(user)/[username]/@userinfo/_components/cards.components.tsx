@@ -83,8 +83,6 @@ const UserAttendanceModal = ({ opened, close }: Disclosure) => {
           mapStyle="https://4flsvk-8080.csb.app/styles/basic-preview/style.json"
           style={{ width: "100%", height: "20vh" }}
           attributionControl={false}
-          longitude={location.longitude}
-          latitude={location.latitude}
           initialViewState={{
             latitude: -6.277454481086592,
             longitude: 106.66200115221575,
