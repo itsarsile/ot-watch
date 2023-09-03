@@ -2,9 +2,9 @@ import React from 'react'
 import { UserCards } from './_components/cards.components'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/app/api/auth/[...nextauth]/route'
-
+import 'dotenv/config'
 async function getUserData(userId: number) {
-  const res = await fetch(`http://localhost:3000/api/users/${userId}`)
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/${userId}`)
   if (!res.ok) {
     return <div>Anda belum log in</div>
   }
