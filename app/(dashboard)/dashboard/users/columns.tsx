@@ -11,7 +11,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { IconDotsVertical } from "@tabler/icons-react";
 import { ColumnDef } from "@tanstack/react-table";
-import {ArrowUpDown} from "lucide-react";
+import { ArrowUpDown } from "lucide-react";
+import { modals } from '@mantine/modals'
+import { EditUserModal } from "../_components/modal.components";
+import { useDisclosure } from "@mantine/hooks";
 
 export type Users = {
   userId: number;
@@ -62,9 +65,11 @@ export const columns: ColumnDef<Users>[] = [
     header: "Actions",
     cell: ({ row }) => {
       const user = row.original;
-
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      const [opened, { open, close }] = useDisclosure(false);
       return (
         <DropdownMenu>
+          <EditUserModal opened={opened} close={close} userData={user}/>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="h-8 w-8 p-0">
               <span className="sr-only">Open menu</span>
@@ -80,7 +85,7 @@ export const columns: ColumnDef<Users>[] = [
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem
-              onClick={() => console.log(user.userId)}
+              onClick={open}
             >
               Edit
             </DropdownMenuItem>

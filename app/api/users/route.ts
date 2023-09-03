@@ -4,15 +4,7 @@ import { eq, not, sql } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 import { createEdgeRouter, createRouter } from "next-connect";
 
-interface RequestContext {
-  params: {
-    id: string;
-  };
-}
-
-const router = createEdgeRouter<NextRequest, RequestContext>();
-
-router.get(async (req) => {
+export async function GET(request: NextRequest) {
   try {
     const users = await db.query.User.findMany({
       where: not(eq(User.role, "ADMIN")),
@@ -30,6 +22,7 @@ router.get(async (req) => {
 
     const filteredUsers = users.map((user) => ({
       id: user.id,
+      role: user.role,
       name: user.superVisorProfile[0]?.name || user.salesProfile[0]?.name || "",
       branch:
         user.superVisorProfile[0]?.branch || user.salesProfile[0]?.branch || "",
@@ -52,10 +45,4 @@ router.get(async (req) => {
   } catch (error) {
     console.error(error);
   }
-});
-
-export async function GET(request: NextRequest, ctx: RequestContext) {
-  return router.run(request, ctx);
 }
-
-export default router;

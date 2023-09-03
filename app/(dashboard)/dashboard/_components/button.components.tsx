@@ -1,11 +1,10 @@
 "use client";
-import { Card, Grid, Group, Paper, Stack, Title } from "@mantine/core";
-import { IconListDetails, IconUsers } from "@tabler/icons-react";
-import { SFListModal, SFRegistrationModal } from "./modal.components";
-import { useDisclosure } from "@mantine/hooks";
-import useSWR, { SWRConfig } from "swr";
 import { fetcher } from "@/lib/fetcher";
-import axios from "axios";
+import { Card, Grid, Group, Paper, Stack } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
+import { IconUsers } from "@tabler/icons-react";
+import useSWR, { SWRConfig } from "swr";
+import { SFRegistrationModal } from "./modal.components";
 
 type Supervisor = {
   name: string;
@@ -18,10 +17,6 @@ export const UsersActions = () => {
     fetcher
   );
   if (isLoading) return <div>Loading data...</div>;
-  console.log(
-    "🚀 ~ file: button.components.tsx:30 ~ AccountCreationButton ~ data:",
-    supervisorsData
-  );
   const supervisors = supervisorsData?.supervisors.map(
     (supervisor: Supervisor) => `${supervisor.name} - ${supervisor.kcontact}`
   );

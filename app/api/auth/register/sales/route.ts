@@ -37,7 +37,6 @@ export async function POST(request: Request) {
           .from(superVisorProfile)
           .where(eq(superVisorProfile.kcontact, spvkcontact));
 
-        console.log("🚀 ~ file: route.ts:40 ~ POST ~ findSupervisorId:", spvId)
 
         const profile = await db.insert(salesProfile).values({
           name,
@@ -48,7 +47,7 @@ export async function POST(request: Request) {
           superVisorProfileId: spvId[0].id,
           userId: user[0].insertedId,
         });
-        console.log("🚀 ~ file: route.ts:28 ~ profile ~ profile:", profile);
+        
         return NextResponse.json(
           { user, profile },
           { status: 201, statusText: "Success" }

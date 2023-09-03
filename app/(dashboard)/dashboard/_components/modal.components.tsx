@@ -4,6 +4,7 @@ import {
   ISFListModal,
   ISFRegistrationModal,
   IMapDashboard,
+  Disclosure,
 } from "@/types/interfaces";
 import {
   Button,
@@ -17,16 +18,16 @@ import {
   TextInput,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { useState } from "react";
-import { mutate } from "swr";
+import { useEffect, useState } from "react";
+import {useRouter} from 'next/navigation'
+import useSWR, { mutate } from "swr";
 export const SFRegistrationModal = ({
   opened,
   close,
   supervisors,
 }: ISFRegistrationModal) => {
-  console.log("🚀 ~ file: modal.components.tsx:41 ~ supervisors:", supervisors);
   const [loading, setLoading] = useState(false);
-
+  const router = useRouter()
   const initialFormValues = {
     username: "",
     password: "",
@@ -42,19 +43,18 @@ export const SFRegistrationModal = ({
   const form = useForm({
     initialValues: initialFormValues,
   });
-  console.log(form.values.supervisors);
   const handleRegister = form.onSubmit(async (values, _event) => {
     try {
       setLoading(true);
       _event.preventDefault();
-      const response = fetch("/api/auth/register/sales", {
+      const response = await fetch("/api/auth/register/sales", {
         method: "POST",
         body: JSON.stringify(values),
       });
-      console.log(
-        "🚀 ~ file: modal.components.tsx:28 ~ handleRegister ~ response:",
-        response
-      );
+      if (response.ok) {
+        mutate('/api/users')
+        router.refresh()
+      }
     } catch (error) {
       console.error(error);
     } finally {
@@ -65,7 +65,6 @@ export const SFRegistrationModal = ({
     }
   });
 
-  console.log(form.values);
 
   return (
     <Modal opened={opened} onClose={close} size="lg" title="Registrasi Akun SF">
@@ -147,25 +146,33 @@ export const SFRegistrationModal = ({
   );
 };
 
-export const SFListModal = ({ opened, close }: ISFListModal) => {
+interface IEditUser extends Disclosure {
+  userData: any;
+}
+
+export const EditUserModal = ({ opened, close, userData }: IEditUser) => {
+  const form = useForm({
+    initialValues: {
+      name: userData?.name,
+      branch: userData?.branch,
+      agency: userData?.agency,
+      phoneNumber: userData?.phoneNumber,
+      kcontact: userData?.kcontact,
+    }
+  });
+
+
+ 
   return (
-    <Modal
-      size="83.33%"
-      opened={opened}
-      onClose={close}
-      title="Daftar Sales Force"
-    >
-      <Table>
-        <thead>
-          <tr>
-            <th>Nama</th>
-            <th>K-Contact</th>
-            <th>Agency</th>
-            <th>Branch</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-      </Table>
+    <Modal size="md" opened={opened} onClose={close} title="Edit User">
+      <Stack>
+        <TextInput label="Nama" {...form.getInputProps("name")} />
+        <TextInput label="Branch" {...form.getInputProps("branch")} />
+        <TextInput label="Agency" {...form.getInputProps("agency")} />
+        <TextInput label="K-Contact" {...form.getInputProps("kcontact")} />
+        <TextInput label="Nomor Telp." {...form.getInputProps("phoneNumber")} />
+        <Button variant="default" className="bg-slate-600">Update User</Button>
+      </Stack>
     </Modal>
   );
 };

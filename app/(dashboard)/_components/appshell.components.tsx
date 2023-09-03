@@ -82,11 +82,19 @@ export default function DashboardShell(props: { children: React.ReactNode }) {
   ];
 
   const UserMenu = [
+    {
+      label: "Dashboard", icon: IconGauge,
+    },
   ]
 
-  const links = AdminMenu.map((item) => (
+  const AdminLinks = AdminMenu.map((item) => (
     <LinksGroup {...item} key={item.label} />
   ));
+
+  const UserLinks = UserMenu.map((item) => (
+    <LinksGroup {...item} key={item.label} />
+  ));
+
   const [opened, setOpened] = useState(false);
   return (
     <AppShell
@@ -114,7 +122,7 @@ export default function DashboardShell(props: { children: React.ReactNode }) {
             </Group>
           </Navbar.Section>
           <Navbar.Section grow className={classes.links} component={ScrollArea}>
-            <div className={classes.linksInner}>{links}</div>
+            <div className={classes.linksInner}>{data?.user.role === 'ADMIN' ? AdminLinks : UserLinks}</div>
           </Navbar.Section>
           <Navbar.Section className={classes.footer}>
             <div className={classes.linksInner}>

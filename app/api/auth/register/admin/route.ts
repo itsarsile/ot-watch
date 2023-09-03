@@ -16,7 +16,6 @@ export async function POST(request: Request) {
       })
       .returning({ insertedId: User.id });
 
-    console.log("🚀 ~ file: route.ts:19 ~ POST ~ user:", user[0].insertedId);
 
     const profile = await db.insert(adminProfile).values({
       name,
@@ -24,7 +23,6 @@ export async function POST(request: Request) {
       phoneNumber,
       userId: user[0].insertedId,
     });
-    console.log("🚀 ~ file: route.ts:28 ~ profile ~ profile:", profile);
 
     return NextResponse.json(
       { user, profile },
