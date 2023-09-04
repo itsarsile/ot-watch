@@ -43,9 +43,10 @@ export const userAttendance = pgTable("userAttendance", {
 	checkOutTime: timestamp("checkOutTime", { precision: 3, mode: 'string' }),
 	latitude: doublePrecision("latitude"),
 	longitude: doublePrecision("longitude"),
-	salesProfileId: integer("salesProfileId"),
+	salesProfileId: integer("salesProfileId").references(() => salesProfile.id, { onDelete: "set null", onUpdate: "cascade" } ),
 	photo: text("photo"),
-	superVisorProfileId: integer("superVisorProfileId"),
+	superVisorProfileId: integer("superVisorProfileId").references(() => superVisorProfile.id, { onDelete: "set null", onUpdate: "cascade" } ),
+	otLocation: text("otLocation"),
 });
 
 export const salesProfile = pgTable("salesProfile", {
@@ -105,7 +106,6 @@ export const supervisorUserRelations = relations(superVisorProfile, ({ one }) =>
 		references: [User.id]
 	})
 }))
-
 
 export const salesUserRelations = relations(salesProfile, ({ one }) => ({
 	user: one(User, {

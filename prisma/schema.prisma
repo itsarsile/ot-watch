@@ -45,6 +45,8 @@ model salesProfile {
   userAttendance      userAttendance[]
   superVisorProfile   superVisorProfile? @relation(fields: [superVisorProfileId], references: [id])
   superVisorProfileId Int?
+
+  @@index([superVisorProfileId])
 }
 
 model superVisorProfile {
@@ -76,13 +78,16 @@ model userAttendance {
   checkOutTime        DateTime?
   latitude            Float?
   longitude           Float?
+  otLocation          String?
   photo               String?
   salesProfile        salesProfile?      @relation(fields: [salesProfileId], references: [id])
   salesProfileId      Int?
   superVisorProfile   superVisorProfile? @relation(fields: [superVisorProfileId], references: [id])
   superVisorProfileId Int?
-}
 
+  @@index([salesProfileId])
+  @@index([superVisorProfileId])
+}
 
 enum Roles {
   SUPERADMIN

@@ -13,8 +13,10 @@ async function getUserData(userId: number) {
 
 async function UserInfo() {
   const session = await getServerSession(authOptions)
+  console.log("🚀 ~ file: page.tsx:16 ~ UserInfo ~ session:", session)
   const userId = session?.user.id
   const user = await getUserData(Number(userId))
+  console.log("🚀 ~ file: page.tsx:18 ~ UserInfo ~ user:", user)
 
   return (  
     <UserCards userData={user}/>

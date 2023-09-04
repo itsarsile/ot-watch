@@ -8,23 +8,25 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import "@/public/css/maplibre.css";
 import { Disclosure } from "@/types/interfaces";
 import { Modal } from "@mantine/core";
-import { useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
-import { ListChecks, PenLine } from "lucide-react";
-import Map, { Marker } from "react-map-gl/maplibre";
+import { Camera, ListChecks, PenLine, Repeat } from "lucide-react";
 import Script from "next/script";
-import "@/public/css/maplibre.css";
+import Map, { Marker } from "react-map-gl/maplibre";
 
-import { useGeolocated } from "react-geolocated";
+import { base64ToBlob } from "@/lib/basetoblob";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Webcam from "react-webcam";
+import { supabase } from "@/lib/supabase";
+
+
 export const UserCards = ({ userData }: any) => {
   const [opened, { open, close }] = useDisclosure(false);
   return (
     <>
-      <UserAttendanceModal opened={opened} close={close} />
+      <UserAttendanceModal opened={opened} close={close} userData={userData} />
       <Card>
         <CardHeader>
           <CardTitle>Halo, {userData.name}</CardTitle>
@@ -46,12 +48,42 @@ export const UserCards = ({ userData }: any) => {
   );
 };
 
-const UserAttendanceModal = ({ opened, close }: Disclosure) => {
+interface IUserAttendanceModal extends Disclosure {
+  userData: {};
+}
+
+const UserAttendanceModal = ({
+  opened,
+  close,
+  userData,
+}: IUserAttendanceModal) => {
   const [location, setLocation] = useState({
     latitude: 0,
     longitude: 0,
   });
   const [address, setAddress] = useState("");
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  console.log("🚀 ~ file: cards.components.tsx:59 ~ userData:", userData)
+  const [disableSubmit, setDisableSubmit] = useState(false);
+
+
+  const handleSubmit = async () => {
+    if (imageFile) {
+      try {
+        const { data, error } = await supabase.storage.from('selfie').upload(imageFile.name, imageFile)
+        console.log("🚀 ~ file: cards.components.tsx:74 ~ handleSubmit ~ data:", data)
+      } catch (error) {
+        
+      }
+      // Perform the image upload here, e.g., using Supabase or another API
+      // You can use the `imageFile` state to access the selected image file
+      // Make sure to handle the upload logic and state updates accordingly
+      console.log("Uploading image:", imageFile);
+
+      // After successful upload, you can reset the state if needed
+      setImageFile(null);
+    }
+  };
 
   const getLocation = useCallback(() => {
     if (navigator.geolocation) {
@@ -125,53 +157,85 @@ const UserAttendanceModal = ({ opened, close }: Disclosure) => {
           </CardHeader>
           <CardContent>{address}</CardContent>
         </Card>
-        <SelfieComponent />
+        <SelfieComponent setImageFile={setImageFile} onRetake={() => setDisableSubmit(true)} setDisableSubmit={setDisableSubmit}/>
+        {imageFile && (
+          <div className="mt-5">
+            <Button onClick={handleSubmit} disabled={disableSubmit}>Submit</Button>
+          </div>
+        )}
       </Modal>
       <Script src="https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.js" />
     </>
   );
 };
 
-const SelfieComponent = () => {
+const SelfieComponent = ({
+  setImageFile,
+  onRetake,
+  setDisableSubmit
+}: {
+  setImageFile: (file: File | null) => void;
+  onRetake: () => void,
+  setDisableSubmit: (value: boolean) => void;
+}) => {
   const webcamRef = useRef<Webcam | null>(null);
   const [imgSrc, setImgSrc] = useState<string | null>(null);
   const [cameraEnabled, setCameraEnabled] = useState(true);
 
-  console.log(
-    "🚀 ~ file: cards.components.tsx:141 ~ SelfieComponent ~ imgSrc:",
-    imgSrc
-  );
-
   const capture = useCallback(() => {
     const imageSrc = webcamRef.current?.getScreenshot();
     if (imageSrc) {
-        setImgSrc(imageSrc)
-        setCameraEnabled(false);
+      const blob = base64ToBlob(imageSrc);
+      const currentDate = new Date();
+      const file = new File(
+        [blob],
+        `selfie_${currentDate.toISOString()}.jpeg`,
+        {
+          type: "image/jpeg",
+        }
+      );
+      setImageFile(file);
+      setImgSrc(imageSrc);
+      setCameraEnabled(false);
+      setDisableSubmit(false)
     }
-  }, [webcamRef, setImgSrc]);
+  }, [webcamRef, setImgSrc, setImageFile, setDisableSubmit]);
 
   return (
-    <div>
+    <div className="relative">
       {cameraEnabled ? (
-        <Webcam ref={(ref) => { webcamRef.current = ref}} screenshotFormat="image/jpeg" videoConstraints={{
-            facingMode: "user"
-        }}/>
+        <Webcam
+          ref={(ref) => {
+            webcamRef.current = ref;
+          }}
+          screenshotFormat="image/jpeg"
+          videoConstraints={{
+            facingMode: "user",
+          }}
+        />
       ) : null}
-      {cameraEnabled && <Button onClick={capture} className="mt-5">Capture</Button>}
+      {cameraEnabled && (
+        <Button onClick={capture} className="absolute top-1 right-1 shadow-md">
+          <Camera className="mr-4 w-4 h-4" />
+          Capture
+        </Button>
+      )}
       {imgSrc && (
-        <div>
+        <div className="relative">
           <img src={imgSrc} alt="Captured" />
           {/* Add a button to allow retaking a photo if needed */}
-          <div className="flex gap-2 mt-5">
+          <div className="flex gap-2 mt-5 shadow-md">
             <Button
+              className="absolute top-1 right-1"
               onClick={() => {
                 setImgSrc(null);
                 setCameraEnabled(true);
+                onRetake();
               }}
             >
-              Retake
+              <Repeat className="mr-4 w-4 h-4" />
+              Ambil Ulang
             </Button>
-            <Button>Upload</Button>
           </div>
         </div>
       )}

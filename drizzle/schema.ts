@@ -1,4 +1,4 @@
-import { pgTable, pgEnum, varchar, timestamp, text, integer, uniqueIndex, serial, doublePrecision } from "drizzle-orm/pg-core"
+import { pgTable, pgEnum, varchar, timestamp, text, integer, uniqueIndex, serial, index, doublePrecision } from "drizzle-orm/pg-core"
 
 import { relations, sql } from "drizzle-orm"
 export const key_status = pgEnum("key_status", ['expired', 'invalid', 'valid', 'default'])
@@ -46,6 +46,13 @@ export const userAttendance = pgTable("userAttendance", {
 	salesProfileId: integer("salesProfileId"),
 	photo: text("photo"),
 	superVisorProfileId: integer("superVisorProfileId"),
+	otLocation: text("otLocation"),
+},
+(table) => {
+	return {
+		salesProfileId_idx: index("userAttendance_salesProfileId_idx").on(table.salesProfileId),
+		superVisorProfileId_idx: index("userAttendance_superVisorProfileId_idx").on(table.superVisorProfileId),
+	}
 });
 
 export const salesProfile = pgTable("salesProfile", {
@@ -59,6 +66,13 @@ export const salesProfile = pgTable("salesProfile", {
 	agency: text("agency").notNull(),
 	branch: text("branch").notNull(),
 	status: Status("status"),
+},
+(table) => {
+	return {
+		kcontact_key: uniqueIndex("salesProfile_kcontact_key").on(table.kcontact),
+		userId_key: uniqueIndex("salesProfile_userId_key").on(table.userId),
+		superVisorProfileId_idx: index("salesProfile_superVisorProfileId_idx").on(table.superVisorProfileId),
+	}
 });
 
 export const User = pgTable("User", {
@@ -68,6 +82,11 @@ export const User = pgTable("User", {
 	avatarUrl: text("avatarUrl"),
 	role: Roles("role").notNull(),
 	createdAt: timestamp("createdAt", { precision: 3, mode: 'string' }).defaultNow().notNull(),
+},
+(table) => {
+	return {
+		username_key: uniqueIndex("User_username_key").on(table.username),
+	}
 });
 
 export const superAdminProfile = pgTable("superAdminProfile", {
@@ -92,6 +111,12 @@ export const superVisorProfile = pgTable("superVisorProfile", {
 	agency: text("agency").notNull(),
 	branch: text("branch").notNull(),
 	status: Status("status"),
+},
+(table) => {
+	return {
+		kcontact_key: uniqueIndex("superVisorProfile_kcontact_key").on(table.kcontact),
+		userId_key: uniqueIndex("superVisorProfile_userId_key").on(table.userId),
+	}
 });
 
 export const usersRelations = relations(User, ({ many }) => ({
@@ -105,7 +130,6 @@ export const supervisorUserRelations = relations(superVisorProfile, ({ one }) =>
 		references: [User.id]
 	})
 }))
-
 
 export const salesUserRelations = relations(salesProfile, ({ one }) => ({
 	user: one(User, {
