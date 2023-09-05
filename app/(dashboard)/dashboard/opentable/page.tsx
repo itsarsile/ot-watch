@@ -1,5 +1,5 @@
 import React from 'react'
-import { MapsComponents } from '../_components/maps.components'
+import { MapsComponents } from './OpenTableMaps'
 
 function OpenTablePage() {
   return (

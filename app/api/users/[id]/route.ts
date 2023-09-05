@@ -43,7 +43,6 @@ export async function GET(
 
     const user = users.map((user) => ({
       id: user.id,
-      salesProfile: user.salesProfile[0],
       role: user.role,
       name: user.superVisorProfile[0]?.name || user.salesProfile[0]?.name || "",
       branch:

@@ -12,10 +12,16 @@ import {
   createStyles,
   rem,
 } from "@mantine/core";
-import { IconGauge, IconLogout, IconMapPin, IconUsersGroup } from "@tabler/icons-react";
+import {
+  IconGauge,
+  IconLogout,
+  IconMapPin,
+  IconUsersGroup,
+} from "@tabler/icons-react";
 import { useState } from "react";
 import { LinksGroup } from "./linksgroup.components";
 import { signOut, useSession } from "next-auth/react";
+import Image from "next/image";
 
 const useStyles = createStyles((theme) => ({
   navbar: {
@@ -67,18 +73,16 @@ export default function DashboardShell(props: { children: React.ReactNode }) {
     {
       label: "SF & SPV Management",
       icon: IconUsersGroup,
-      links: [
-        { label: "Semua Akun", link: `/dashboard/users` },
-      ],
+      links: [{ label: "Semua Akun", link: `/dashboard/users` }],
     },
     {
       label: "Lokasi Open Table",
       icon: IconMapPin,
       links: [
-        { label: "Overview", link: `/dashboard/opentable`},
-        { label: "Daftar Lokasi", link: `/dashboard/opentable/list`}
-      ]
-    }
+        { label: "Overview", link: `/dashboard/opentable` },
+        { label: "Daftar Lokasi", link: `/dashboard/opentable/list` },
+      ],
+    },
   ];
 
   const UserMenu = [
@@ -87,10 +91,13 @@ export default function DashboardShell(props: { children: React.ReactNode }) {
       icon: IconGauge,
       links: [
         { label: "Overview", link: `/dashboard/${data?.user?.username}` },
-        { label: "Daily Report", link: `/dashboard/dailyreport/${data?.user?.username}`}
+        {
+          label: "Daily Report",
+          link: `/dashboard/dailyreport/${data?.user?.username}`,
+        },
       ],
     },
-  ]
+  ];
 
   const AdminLinks = AdminMenu.map((item) => (
     <LinksGroup {...item} key={item.label} />
@@ -106,7 +113,12 @@ export default function DashboardShell(props: { children: React.ReactNode }) {
       header={
         <Header height={{ base: 70 }} p="md" className={classes.navbar}>
           <div className="flex justify-between items-center h-full">
-            <Text>Dashboard</Text>
+            <Image
+              src="/logo-telkomsel.png"
+              width={200}
+              height={100}
+              alt="logo-telkomsel"
+            />
             <MediaQuery largerThan="sm" styles={{ display: "none" }}>
               <Burger onClick={() => setOpened((o) => !o)} opened={opened} />
             </MediaQuery>
@@ -127,7 +139,9 @@ export default function DashboardShell(props: { children: React.ReactNode }) {
             </Group>
           </Navbar.Section>
           <Navbar.Section grow className={classes.links} component={ScrollArea}>
-            <div className={classes.linksInner}>{data?.user.role === 'ADMIN' ? AdminLinks : UserLinks}</div>
+            <div className={classes.linksInner}>
+              {data?.user.role === "ADMIN" ? AdminLinks : UserLinks}
+            </div>
           </Navbar.Section>
           <Navbar.Section className={classes.footer}>
             <div className={classes.linksInner}>

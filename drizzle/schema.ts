@@ -43,15 +43,13 @@ export const userAttendance = pgTable("userAttendance", {
 	checkOutTime: timestamp("checkOutTime", { precision: 3, mode: 'string' }),
 	latitude: doublePrecision("latitude"),
 	longitude: doublePrecision("longitude"),
-	salesProfileId: integer("salesProfileId"),
 	photo: text("photo"),
-	superVisorProfileId: integer("superVisorProfileId"),
 	otLocation: text("otLocation"),
+	userId: integer("userId").notNull(),
 },
 (table) => {
 	return {
-		salesProfileId_idx: index("userAttendance_salesProfileId_idx").on(table.salesProfileId),
-		superVisorProfileId_idx: index("userAttendance_superVisorProfileId_idx").on(table.superVisorProfileId),
+		userId_idx: index("userAttendance_userId_idx").on(table.userId),
 	}
 });
 
@@ -116,6 +114,35 @@ export const superVisorProfile = pgTable("superVisorProfile", {
 	return {
 		kcontact_key: uniqueIndex("superVisorProfile_kcontact_key").on(table.kcontact),
 		userId_key: uniqueIndex("superVisorProfile_userId_key").on(table.userId),
+	}
+});
+
+export const visitorReport = pgTable("visitorReport", {
+	id: serial("id").primaryKey().notNull(),
+	visitorName: text("visitorName").notNull(),
+	visitorPhone: text("visitorPhone").notNull(),
+	visitorAddress: text("visitorAddress").notNull(),
+	visitorNeeds: text("visitorNeeds").notNull(),
+	visitorDealing: text("visitorDealing").notNull(),
+	visitorTrackId: text("visitorTrackId"),
+	createdAt: timestamp("createdAt", { precision: 3, mode: 'string' }).defaultNow().notNull(),
+	userAttendanceId: integer("userAttendanceId"),
+},
+(table) => {
+	return {
+		userAttendanceId_idx: index("visitorReport_userAttendanceId_idx").on(table.userAttendanceId),
+	}
+});
+
+export const dailyReport = pgTable("dailyReport", {
+	id: serial("id").primaryKey().notNull(),
+	visitorCount: integer("visitorCount").notNull(),
+	journal: text("journal").notNull(),
+	userId: integer("userId"),
+},
+(table) => {
+	return {
+		userId_idx: index("dailyReport_userId_idx").on(table.userId),
 	}
 });
 

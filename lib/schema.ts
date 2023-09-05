@@ -1,4 +1,4 @@
-import { pgTable, pgEnum, varchar, timestamp, text, integer, uniqueIndex, serial, doublePrecision } from "drizzle-orm/pg-core"
+import { pgTable, pgEnum, varchar, timestamp, text, integer, uniqueIndex, serial, index, doublePrecision } from "drizzle-orm/pg-core"
 
 import { relations, sql } from "drizzle-orm"
 export const key_status = pgEnum("key_status", ['expired', 'invalid', 'valid', 'default'])
@@ -29,12 +29,6 @@ export const adminProfile = pgTable("adminProfile", {
 	phoneNumber: text("phoneNumber"),
 	createdAt: timestamp("createdAt", { precision: 3, mode: 'string' }).defaultNow(),
 	userId: integer("userId").notNull(),
-},
-(table) => {
-	return {
-		nik_key: uniqueIndex("adminProfile_nik_key").on(table.nik),
-		userId_key: uniqueIndex("adminProfile_userId_key").on(table.userId),
-	}
 });
 
 export const userAttendance = pgTable("userAttendance", {
@@ -43,9 +37,9 @@ export const userAttendance = pgTable("userAttendance", {
 	checkOutTime: timestamp("checkOutTime", { precision: 3, mode: 'string' }),
 	latitude: doublePrecision("latitude"),
 	longitude: doublePrecision("longitude"),
-	salesProfileId: integer("salesProfileId").references(() => salesProfile.id, { onDelete: "set null", onUpdate: "cascade" } ),
+	salesProfileId: integer("salesProfileId"),
 	photo: text("photo"),
-	superVisorProfileId: integer("superVisorProfileId").references(() => superVisorProfile.id, { onDelete: "set null", onUpdate: "cascade" } ),
+	superVisorProfileId: integer("superVisorProfileId"),
 	otLocation: text("otLocation"),
 });
 
@@ -76,11 +70,6 @@ export const superAdminProfile = pgTable("superAdminProfile", {
 	name: text("name").notNull(),
 	phoneNumber: integer("phoneNumber").notNull(),
 	userId: integer("userId").notNull(),
-},
-(table) => {
-	return {
-		userId_key: uniqueIndex("superAdminProfile_userId_key").on(table.userId),
-	}
 });
 
 export const superVisorProfile = pgTable("superVisorProfile", {
@@ -93,6 +82,26 @@ export const superVisorProfile = pgTable("superVisorProfile", {
 	agency: text("agency").notNull(),
 	branch: text("branch").notNull(),
 	status: Status("status"),
+});
+
+export const visitorReport = pgTable("visitorReport", {
+	id: serial("id").primaryKey().notNull(),
+	visitorName: text("visitorName").notNull(),
+	visitorPhone: text("visitorPhone").notNull(),
+	visitorAddress: text("visitorAddress").notNull(),
+	visitorNeeds: text("visitorNeeds").notNull(),
+	visitorDealing: text("visitorDealing").notNull(),
+	visitorTrackId: text("visitorTrackId"),
+	createdAt: timestamp("createdAt", { precision: 3, mode: 'string' }).defaultNow().notNull(),
+	userAttendanceId: integer("userAttendanceId"),
+});
+
+export const dailyReport = pgTable("dailyReport", {
+	id: serial("id").primaryKey().notNull(),
+	visitorCount: integer("visitorCount").notNull(),
+	journal: text("journal").notNull(),
+	salesProfileId: integer("salesProfileId"),
+	superVisorProfileId: integer("superVisorProfileId"),
 });
 
 export const usersRelations = relations(User, ({ many }) => ({
