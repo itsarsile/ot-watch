@@ -123,6 +123,9 @@ const UserAttendanceModal = ({
   const [address, setAddress] = useState("");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [disableSubmit, setDisableSubmit] = useState(false);
+  const currentDate = new Date().toLocaleString("en-US", {
+    timeZone: "Asia/Jakarta",
+  });
 
   const handleSubmit = async () => {
     if (imageFile && location.latitude !== 0 && location.longitude !== 0) {
@@ -131,11 +134,11 @@ const UserAttendanceModal = ({
         const { data, error } = await supabase.storage
           .from("selfie")
           .upload(imageFile.name, imageFile);
-  
+
         if (error) {
           console.log("Error uploading file", error);
         }
-  
+
         if (data) {
           selfiePublicUrl = await supabase.storage
             .from("selfie")
@@ -145,7 +148,7 @@ const UserAttendanceModal = ({
             selfiePublicUrl
           );
         }
-  
+
         const res = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/api/users/attendance`,
           {
@@ -155,9 +158,7 @@ const UserAttendanceModal = ({
             },
             body: JSON.stringify({
               userId: userData.userId,
-              checkInTime: new Date().toLocaleString("en-US", {
-                timeZone: "Asia/Jakarta",
-              }),
+              checkInTime: currentDate,
               latitude: location.latitude,
               longitude: location.longitude,
               otLocation: address,
@@ -165,7 +166,7 @@ const UserAttendanceModal = ({
             }),
           }
         );
-  
+
         if (res.ok) {
           router.refresh();
           console.log("success submitting attendance");
@@ -173,13 +174,12 @@ const UserAttendanceModal = ({
       } catch (error) {
         console.error(error);
       }
-  
+
       setImageFile(null);
     } else {
-      console.log('Location must not be empty')
+      console.log("Location must not be empty");
     }
   };
-  
 
   const getLocation = useCallback(() => {
     if ("geolocation" in navigator) {
@@ -242,6 +242,7 @@ const UserAttendanceModal = ({
             <CardTitle className="text-lg">Lokasi Open Table</CardTitle>
           </CardHeader>
           <CardContent>{address}</CardContent>
+          <CardContent>{currentDate}</CardContent>
         </Card>
         <SelfieComponent
           setImageFile={setImageFile}
