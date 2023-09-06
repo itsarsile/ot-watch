@@ -44,7 +44,7 @@ export const UserActions = ({ userData, checkAttend }: any) => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            checkOutTime: new Date().toISOString(),
+            checkOutTime: new Date().toUTCString(),
           }),
         }
       );
@@ -123,9 +123,7 @@ const UserAttendanceModal = ({
   const [address, setAddress] = useState("");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [disableSubmit, setDisableSubmit] = useState(false);
-  const currentDate = new Date().toLocaleString("en-US", {
-    timeZone: "Asia/Jakarta",
-  });
+  const currentDate = new Date().toUTCString()
 
   const handleSubmit = async () => {
     if (imageFile && location.latitude !== 0 && location.longitude !== 0) {
