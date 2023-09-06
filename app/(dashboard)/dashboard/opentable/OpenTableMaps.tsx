@@ -21,13 +21,9 @@ export const MapsComponents = () => {
     return <div>Loading marker...</div>;
   }
 
-  const todayAttendances = data.todayAttendances;
-  console.log(
-    "🚀 ~ file: OpenTableMaps.tsx:26 ~ MapsComponents ~ todayAttendances:",
-    todayAttendances
-  );
+  const todayAttendances = data?.todayAttendances;
 
-  const attendancesMarkerPin = todayAttendances.map((attendance: any) => (
+  const attendancesMarkerPin = todayAttendances && todayAttendances.map((attendance: any) => (
     <HoverCard key={attendance.username} width={250} withArrow closeDelay={300}>
       <Marker
         longitude={attendance.longitude}
@@ -98,7 +94,7 @@ export const MapsComponents = () => {
         style={{ width: "100%", height: "80vh" }}
         attributionControl={false}
       >
-        {attendancesMarkerPin}
+        {attendancesMarkerPin && attendancesMarkerPin}
       </Map>
       <Script src="https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.js" />
     </>
