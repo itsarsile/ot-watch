@@ -135,7 +135,7 @@ export default function DashboardShell(props: { children: React.ReactNode }) {
         >
           <Navbar.Section className={classes.header}>
             <Group position="apart">
-              <Code sx={{ fontWeight: 700 }}>v3.1.2</Code>
+              <Code sx={{ fontWeight: 700 }}>OT-Watch - v0.0.1-alpha</Code>
             </Group>
           </Navbar.Section>
           <Navbar.Section grow className={classes.links} component={ScrollArea}>

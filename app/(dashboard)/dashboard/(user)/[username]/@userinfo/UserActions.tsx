@@ -31,8 +31,11 @@ import { cookies } from "next/headers";
 import { useRouter } from "next/navigation";
 
 export const UserActions = ({ userData, checkAttend }: any) => {
-  console.log("🚀 ~ file: UserActions.tsx:33 ~ UserActions ~ checkAttend:", checkAttend)
-  const router = useRouter()
+  console.log(
+    "🚀 ~ file: UserActions.tsx:33 ~ UserActions ~ checkAttend:",
+    checkAttend
+  );
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [opened, { open, close }] = useDisclosure(false);
   const handleCheckOut = async () => {
@@ -53,7 +56,7 @@ export const UserActions = ({ userData, checkAttend }: any) => {
 
       if (res.ok) {
         console.log("Checked out");
-        router.refresh()
+        router.refresh();
       }
     } catch (error) {
       setIsLoading(false);
@@ -67,7 +70,7 @@ export const UserActions = ({ userData, checkAttend }: any) => {
       <UserAttendanceModal opened={opened} close={close} userData={userData} />
       <Card>
         <CardHeader>
-          <CardTitle>Halo, {userData.name}</CardTitle>
+          <CardTitle>Halo, {userData.name}!</CardTitle>
           <CardDescription>
             Jangan lupa untuk mengisi laporan harian beserta lokasi open tabel
             saat ini dibawah!
@@ -118,6 +121,7 @@ const UserAttendanceModal = ({
   close,
   userData,
 }: IUserAttendanceModal) => {
+  const router = useRouter();
   const [location, setLocation] = useState({
     latitude: 0,
     longitude: 0,
@@ -133,14 +137,19 @@ const UserAttendanceModal = ({
         const { data, error } = await supabase.storage
           .from("selfie")
           .upload(imageFile.name, imageFile);
+
         if (error) {
-          console.error("Error uploading file");
+          console.log("Error uploading file", error);
         }
 
         if (data) {
           selfiePublicUrl = await supabase.storage
             .from("selfie")
             .getPublicUrl(data?.path);
+          console.log(
+            "🚀 ~ file: UserActions.tsx:145 ~ handleSubmit ~ selfiePublicUrl:",
+            selfiePublicUrl
+          );
         }
 
         const res = await fetch(
@@ -152,7 +161,9 @@ const UserAttendanceModal = ({
             },
             body: JSON.stringify({
               userId: userData.userId,
-              checkInTime: new Date().toISOString(),
+              checkInTime: new Date().toLocaleString("en-US", {
+                timeZone: "Asia/Jakarta",
+              }),
               latitude: location.latitude,
               longitude: location.longitude,
               otLocation: address,
@@ -162,6 +173,7 @@ const UserAttendanceModal = ({
         );
 
         if (res.ok) {
+          router.refresh();
           console.log("success submitting attendance");
         }
       } catch (error) {
@@ -331,5 +343,4 @@ const SelfieComponent = ({
   );
 };
 
-
-export default UserActions
+export default UserActions;

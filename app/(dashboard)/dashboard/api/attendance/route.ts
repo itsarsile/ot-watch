@@ -8,34 +8,47 @@ import { NextResponse } from "next/server";
 export async function GET(request: Request) {
   try {
     const session = await getServerSession(authOptions);
+
+    if (!session?.user) return NextResponse.json({message: 'Unauthorized'}, { status: 401 })
+
     const userId = session?.user.id;
-    const currentDate = new Date().toISOString().split("T")[0];
-    const [{ checkInTime, checkOutTime }] = await db
+    console.log("🚀 ~ file: route.ts:15 ~ GET ~ userId:", userId)
+
+    const currentDate = new Date()
+      .toLocaleString("en-US", { timeZone: "Asia/Jakarta" })
+      .split(",")[0];
+
+    const attendanceRecord = await db
       .select({
         checkInTime: userAttendance.checkInTime,
         checkOutTime: userAttendance.checkOutTime,
       })
       .from(userAttendance)
-      .where(eq(userAttendance.userId, Number(userId)));
+      .where(eq(userAttendance.userId, Number(userId)))
+      
+    console.log("🚀 ~ file: route.ts:27 ~ GET ~ attendanceRecord:", attendanceRecord)
 
-    const parsedCheckInTime = new Date(checkInTime).toISOString().split("T")[0];
+
+    const parsedCheckInTime = new Date(attendanceRecord[0].checkInTime)
+    .toLocaleString("en-US", { timeZone: "Asia/Jakarta" })
+    .split(",")[0];
+
+    console.log("🚀 ~ file: route.ts:33 ~ GET ~ parsedCheckInTime:", parsedCheckInTime)
 
     if (parsedCheckInTime === currentDate) {
-      if (checkOutTime) {
+      if (attendanceRecord[0].checkOutTime) {
         return NextResponse.json(
           { message: "User already attend and checked out!" },
           { status: 201 }
         );
       }
       return NextResponse.json(
-        { message: "User already attend " },
+        { message: "User already attend" },
         { status: 200 }
       );
     }
-
-    return NextResponse.json({ message: "User not attended" }, { status: 404 });
   } catch (error) {
-    console.error(error);
+    return NextResponse.json({ message: "Error fetching current attendance" }, { status: 500 });
   }
 }
 
