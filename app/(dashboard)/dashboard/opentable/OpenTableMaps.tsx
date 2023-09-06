@@ -14,8 +14,9 @@ export const MapsComponents = ({ attendanceData }: any) => {
     "🚀 ~ file: OpenTableMaps.tsx:12 ~ MapsComponents ~ attendanceData:",
     attendanceData
   );
+  
 
-  const attendancesMarkerPin = attendanceData.todayAttendances.map(
+  const attendancesMarkerPin = attendanceData?.todayAttendances.map(
     (attendance: any) => (
       <HoverCard key={attendance.username} width={300} withArrow closeDelay={300}>
         <Marker
