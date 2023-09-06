@@ -1,5 +1,5 @@
 import { db } from "@/drizzle/db";
-import { User } from "@/drizzle/schema";
+import { user } from "@/drizzle/schema";
 import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
@@ -9,8 +9,8 @@ export async function GET(
 ) {
   try {
     const id = params.id;
-    const users = await db.query.User.findMany({
-      where: eq(User.id, Number(id)),
+    const users = await db.query.user.findMany({
+      where: eq(user.id, Number(id)),
       columns: {
         id: true,
         username: true,
@@ -41,7 +41,7 @@ export async function GET(
       },
     });
 
-    const user = users.map((user) => ({
+    const usersProfile = users.map((user) => ({
       id: user.id,
       role: user.role,
       name: user.superVisorProfile[0]?.name || user.salesProfile[0]?.name || "",
@@ -62,7 +62,7 @@ export async function GET(
       userId: user.id,
     }));
 
-    return NextResponse.json(user[0]);
+    return NextResponse.json(usersProfile[0]);
   } catch (error) {
     console.error(error)
   }

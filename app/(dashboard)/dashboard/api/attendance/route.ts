@@ -33,7 +33,6 @@ export async function GET(request: Request) {
     .toLocaleString("en-US", { timeZone: "Asia/Jakarta" })
     .split(",")[0];
 
-    console.log("🚀 ~ file: route.ts:33 ~ GET ~ parsedCheckInTime:", parsedCheckInTime)
 
     if (parsedCheckInTime === currentDate) {
       if (attendanceRecord[0].checkOutTime) {

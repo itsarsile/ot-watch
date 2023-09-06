@@ -27,14 +27,9 @@ import { base64ToBlob } from "@/lib/basetoblob";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Webcam from "react-webcam";
 import { supabase } from "@/lib/supabase";
-import { cookies } from "next/headers";
 import { useRouter } from "next/navigation";
 
 export const UserActions = ({ userData, checkAttend }: any) => {
-  console.log(
-    "🚀 ~ file: UserActions.tsx:33 ~ UserActions ~ checkAttend:",
-    checkAttend
-  );
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [opened, { open, close }] = useDisclosure(false);
@@ -55,7 +50,6 @@ export const UserActions = ({ userData, checkAttend }: any) => {
       );
 
       if (res.ok) {
-        console.log("Checked out");
         router.refresh();
       }
     } catch (error) {
@@ -131,17 +125,17 @@ const UserAttendanceModal = ({
   const [disableSubmit, setDisableSubmit] = useState(false);
 
   const handleSubmit = async () => {
-    if (imageFile) {
+    if (imageFile && location.latitude !== 0 && location.longitude !== 0) {
       try {
         let selfiePublicUrl;
         const { data, error } = await supabase.storage
           .from("selfie")
           .upload(imageFile.name, imageFile);
-
+  
         if (error) {
           console.log("Error uploading file", error);
         }
-
+  
         if (data) {
           selfiePublicUrl = await supabase.storage
             .from("selfie")
@@ -151,7 +145,7 @@ const UserAttendanceModal = ({
             selfiePublicUrl
           );
         }
-
+  
         const res = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/api/users/attendance`,
           {
@@ -171,7 +165,7 @@ const UserAttendanceModal = ({
             }),
           }
         );
-
+  
         if (res.ok) {
           router.refresh();
           console.log("success submitting attendance");
@@ -179,15 +173,13 @@ const UserAttendanceModal = ({
       } catch (error) {
         console.error(error);
       }
-      // Perform the image upload here, e.g., using Supabase or another API
-      // You can use the `imageFile` state to access the selected image file
-      // Make sure to handle the upload logic and state updates accordingly
-      console.log("Uploading image:", imageFile);
-
-      // After successful upload, you can reset the state if needed
+  
       setImageFile(null);
+    } else {
+      console.log('Location must not be empty')
     }
   };
+  
 
   const getLocation = useCallback(() => {
     if ("geolocation" in navigator) {

@@ -1,5 +1,5 @@
 import { db } from "@/drizzle/db";
-import { superVisorProfile, User, salesProfile } from "@/drizzle/schema";
+import { superVisorProfile, user, salesProfile } from "@/drizzle/schema";
 import bcrypt from "bcryptjs";
 import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
@@ -21,14 +21,14 @@ export async function POST(request: Request) {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     if (type === "Sales Force") {
-      const user = await db
-        .insert(User)
+      const users = await db
+        .insert(user)
         .values({
           username,
           password: hashedPassword,
           role: "USER",
         })
-        .returning({ insertedId: User.id });
+        .returning({ insertedId: user.id });
 
       if (supervisors) {
         let spvkcontact = supervisors[0].split(" - ")[1] || null;
@@ -45,7 +45,7 @@ export async function POST(request: Request) {
           agency,
           branch,
           superVisorProfileId: spvId[0].id,
-          userId: user[0].insertedId,
+          userId: users[0].insertedId,
         });
         
         return NextResponse.json(
@@ -56,14 +56,14 @@ export async function POST(request: Request) {
     }
 
     if (type === "Sales Supervisor") {
-      const user = await db
-        .insert(User)
+      const users = await db
+        .insert(user)
         .values({
           username,
           password: hashedPassword,
           role: "SUPERVISOR",
         })
-        .returning({ insertedId: User.id });
+        .returning({ insertedId: user.id });
 
       const profile = await db.insert(superVisorProfile).values({
         name,
@@ -71,7 +71,7 @@ export async function POST(request: Request) {
         phoneNumber,
         agency,
         branch,
-        userId: user[0].insertedId,
+        userId: users[0].insertedId,
       });
 
       return NextResponse.json(

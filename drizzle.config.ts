@@ -6,7 +6,7 @@ export default {
   out: './drizzle',
   driver: "pg",
   introspect: {
-    casing: "preserve",
+    casing: "camel",
   },
   dbCredentials: {
     ssl: true,

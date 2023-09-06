@@ -1,12 +1,30 @@
-import React from 'react'
-import { MapsComponents } from './OpenTableMaps'
+import React from "react";
+import { MapsComponents } from "./OpenTableMaps";
+import { cookies } from "next/headers";
 
-function OpenTablePage() {
-  return (
-    <div>
-        <MapsComponents />
-    </div>
-  )
+async function getAttendanceData() {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/dashboard/opentable/api/attendance`,
+    {
+      headers: {
+        Cookie: cookies().toString(),
+      },
+    }
+  );
+
+  if (res.ok) {
+    return res.json();
+  }
+  console.error("Error fetching attendances");
 }
 
-export default OpenTablePage
+async function OpenTablePage() {
+  const attendanceData = await getAttendanceData();
+  return (
+    <div>
+      <MapsComponents attendanceData={attendanceData}/>
+    </div>
+  );
+}
+
+export default OpenTablePage;

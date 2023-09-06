@@ -1,20 +1,24 @@
-import React from 'react'
-import type { Metadata } from 'next'
+import React from "react";
+import type { Metadata } from "next";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
 export const metadata: Metadata = {
-  title: 'Dashboard - OT Watch'
-}
+  title: "Dashboard - OT Watch",
+};
 
-function UserDashboardLayout(props: {
-    children: React.ReactNode
-    userinfo: React.ReactNode
+async function UserDashboardLayout(props: {
+  children: React.ReactNode;
+  userinfo: React.ReactNode;
+  admininfo: React.ReactNode;
 }) {
+  const session = await getServerSession(authOptions);
   return (
     <>
-    {props.children}
-    {props.userinfo}
+      {props.children}
+      {session?.user.role === "ADMIN" ? props.admininfo : props.userinfo}
     </>
-  )
+  );
 }
 
-export default UserDashboardLayout
+export default UserDashboardLayout;

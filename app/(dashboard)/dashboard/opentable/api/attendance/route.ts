@@ -1,15 +1,47 @@
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { db } from "@/drizzle/db";
+import {
+  user,
+  salesProfile,
+  superVisorProfile,
+  userAttendance,
+} from "@/drizzle/schema";
+import { sql } from "drizzle-orm";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
     const session = await getServerSession(authOptions);
-    const currentDate = new Date().toLocaleString("en-US", {
-      timeZone: "Asia/Jakarta",
-    }).split(",")[0];
-    return NextResponse.json({ time: currentDate });
-  } catch (error) {
-    return NextResponse.json({ message: "Error fetching user attendance" });
+    if (session?.user.role !== 'ADMIN') {
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    } 
+      
+    const todayAttendances = await db.execute(sql`
+      SELECT ${userAttendance.longitude}, 
+             ${userAttendance.latitude}, 
+            ${userAttendance.otLocation}, 
+             ${userAttendance.checkInTime}, 
+             ${userAttendance.checkOutTime}, 
+             ${userAttendance.photo},
+             ${user.username}, 
+        COALESCE(${salesProfile.name}, ${superVisorProfile.name}) as profileName,
+        COALESCE(${salesProfile.kcontact}, ${superVisorProfile.kcontact}) AS profileKContact,
+        COALESCE(${salesProfile.phoneNumber}, ${superVisorProfile.phoneNumber}) AS profilePhoneNumber
+      FROM ${userAttendance}
+      JOIN ${user} ON ${userAttendance.userId} = ${user.id}
+      LEFT JOIN ${salesProfile} on ${userAttendance.userId} = ${salesProfile.userId}
+      LEFT JOIN ${superVisorProfile} on ${userAttendance.userId} = ${superVisorProfile.userId}
+      WHERE DATE(${userAttendance.checkInTime} AT TIME ZONE 'UTC' AT TIME ZONE 'Asia/Jakarta') = CURRENT_DATE 
+    `);
+
+    return NextResponse.json({
+      todayAttendances,
+    });
+  } catch (error: any) {
+    return NextResponse.json({
+      message: "Error fetching user attendance",
+      error: error.message,
+    });
   }
 }
