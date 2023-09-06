@@ -9,6 +9,7 @@ async function getAttendanceData() {
       headers: {
         Cookie: cookies().toString(),
       },
+      cache: "no-store"
     }
   );
 

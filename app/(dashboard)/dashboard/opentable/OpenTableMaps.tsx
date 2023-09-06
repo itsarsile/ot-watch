@@ -7,7 +7,6 @@ import Map, { MapLayerMouseEvent, Marker } from "react-map-gl/maplibre";
 import Script from "next/script";
 import "@/public/css/maplibre.css";
 import { HoverCardTrigger } from "@/components/ui/hover-card";
-import Image from "next/image";
 import { Phone } from "lucide-react";
 
 export const MapsComponents = ({ attendanceData }: any) => {
@@ -53,7 +52,7 @@ export const MapsComponents = ({ attendanceData }: any) => {
             <Divider my={5}/>
             <div className="flex">{attendance.latitude}, {attendance.longitude}</div>
             <Divider my={5}/>
-            <Image src={attendance.photo} width="100" height="50" alt="selfie"/>
+            <img src={attendance.photo} width="100" height="50" alt="selfie"/>
             </div>
           </HoverCard.Dropdown>
         </Marker>
