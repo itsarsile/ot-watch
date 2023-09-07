@@ -21,7 +21,7 @@ import {
   Repeat,
 } from "lucide-react";
 import Script from "next/script";
-import Map, { GeolocateControl, Marker } from "react-map-gl/maplibre";
+import Map, { GeolocateControl } from "react-map-gl/maplibre";
 
 import { base64ToBlob } from "@/lib/basetoblob";
 import { useCallback, useEffect, useRef, useState } from "react";

@@ -34,7 +34,6 @@ export const MapsComponents = () => {
     );
     return asiaJakartaTimezoneDate;
   };
-
   const attendancesMarkerPin =
     todayAttendances &&
     todayAttendances.map((attendance: any) => (
