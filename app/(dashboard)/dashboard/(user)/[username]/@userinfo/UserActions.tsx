@@ -17,6 +17,7 @@ import {
   Clock,
   ListChecks,
   Loader,
+  Newspaper,
   PenLine,
   Repeat,
 } from "lucide-react";
@@ -28,6 +29,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Webcam from "react-webcam";
 import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
+import { Icon } from "@radix-ui/react-select";
+import { modals } from "@mantine/modals";
 
 export const UserActions = ({ userData, checkAttend }: any) => {
   const router = useRouter();
@@ -54,11 +57,13 @@ export const UserActions = ({ userData, checkAttend }: any) => {
       }
     } catch (error) {
       setIsLoading(false);
-      console.error(error);
     } finally {
       setIsLoading(false);
     }
   };
+  const handleDailyReport = () => {
+    console.log('Hello from handle daily report!')
+  }
   return (
     <>
       <UserAttendanceModal opened={opened} close={close} userData={userData} />
@@ -98,6 +103,20 @@ export const UserActions = ({ userData, checkAttend }: any) => {
               </Button>
             </>
           )}
+          <Button onClick={() => {
+            modals.open({
+              title: "Laporan Harian",
+              children: (
+                <>
+                  Hello
+                  <Button onClick={handleDailyReport}>Click me to console log</Button>
+                </>
+              )
+            })
+          }}>
+            <Newspaper className="w-4 h-4 mr-4"/>
+            Laporan Harian
+          </Button>
         </CardContent>
       </Card>
     </>
@@ -333,5 +352,15 @@ const SelfieComponent = ({
     </div>
   );
 };
+
+const DailyReportModal = ({opened, close}: Disclosure) => {
+  return (
+    <Modal opened={opened} onClose={close} title="Laporan Harian">
+      <form>
+
+      </form>
+    </Modal>
+  )
+}
 
 export default UserActions;
