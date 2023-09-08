@@ -43,10 +43,11 @@ export const SFRegistrationModal = ({
   const form = useForm({
     initialValues: initialFormValues,
   });
+  
   const handleRegister = form.onSubmit(async (values, _event) => {
+    _event.preventDefault();
     try {
       setLoading(true);
-      _event.preventDefault();
       const response = await fetch("/api/auth/register/sales", {
         method: "POST",
         body: JSON.stringify(values),

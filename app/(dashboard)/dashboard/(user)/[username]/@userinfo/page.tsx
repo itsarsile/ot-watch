@@ -4,7 +4,8 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import "dotenv/config";
 import { cookies } from "next/headers";
-import DailyReports from "./DailyReports";
+import VisitorReports from "./VisitorReports";
+import ReportList from "./ReportList";
 
 async function getUserData(userId: number) {
   const res = await fetch(
@@ -42,7 +43,14 @@ async function UserInfo() {
   return (
     <>
       <UserActions userData={user} checkAttend={checkAttend} />
-      <DailyReports />
+      <div className="grid lg:grid-cols-3 gap-5 mt-5">
+        <div>
+          <VisitorReports userId={Number(userId)} />
+        </div>
+        <div className="lg:col-span-2">
+          <ReportList />
+        </div>
+      </div>
     </>
   );
 }

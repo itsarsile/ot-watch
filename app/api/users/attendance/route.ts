@@ -5,9 +5,8 @@ import { NextRequest, NextResponse } from "next/server";
 export async function POST(request: NextRequest, response: NextResponse) {
   try {
     const { checkInTime, latitude, longitude, otLocation, photo, userId } =
-    await request.json();
-    console.log("🚀 ~ file: route.ts:8 ~ POST ~ checkInTime:", checkInTime)
-    
+      await request.json();
+
     const res = await db.insert(userAttendance).values({
       userId,
       checkInTime,
@@ -19,6 +18,6 @@ export async function POST(request: NextRequest, response: NextResponse) {
 
     return NextResponse.json({ res }, { status: 201 });
   } catch (error) {
-    console.error(error);
+    return NextResponse.json(error, { status: 500 });
   }
 }

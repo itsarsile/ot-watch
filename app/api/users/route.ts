@@ -42,6 +42,6 @@ export async function GET(request: NextRequest, response: NextResponse) {
 
     return NextResponse.json({ filteredUsers });
   } catch (error) {
-    console.error(error);
+    return NextResponse.json(error, {status: 500})
   }
 }

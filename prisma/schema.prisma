@@ -21,6 +21,7 @@ model User {
   superAdminProfile superAdminProfile?
   userAttendance    userAttendance[]
   dailyReport       dailyReport[]
+  visitorReport     visitorReport[]
 }
 
 model adminProfile {
@@ -38,14 +39,14 @@ model salesProfile {
   name                String
   kcontact            String             @unique
   phoneNumber         String
+  createdAt           DateTime?          @default(now())
+  userId              Int                @unique
+  superVisorProfileId Int?
   agency              String
   branch              String
   status              Status?
-  createdAt           DateTime?          @default(now())
-  userId              Int                @unique
   user                User               @relation(fields: [userId], references: [id])
   superVisorProfile   superVisorProfile? @relation(fields: [superVisorProfileId], references: [id])
-  superVisorProfileId Int?
 
   @@index([superVisorProfileId])
 }
@@ -55,11 +56,11 @@ model superVisorProfile {
   name        String
   kcontact    String         @unique
   phoneNumber String
+  createdAt   DateTime?      @default(now())
+  userId      Int            @unique
   agency      String
   branch      String
   status      Status?
-  createdAt   DateTime?      @default(now())
-  userId      Int            @unique
   user        User           @relation(fields: [userId], references: [id])
   salesForces salesProfile[]
 }
@@ -73,43 +74,40 @@ model superAdminProfile {
 }
 
 model userAttendance {
-  id            Int             @id @default(autoincrement())
-  checkInTime   DateTime
-  checkOutTime  DateTime?
-  latitude      Float?
-  longitude     Float?
-  otLocation    String?
-  photo         String?
-  userId        Int
-  user          User            @relation(fields: [userId], references: [id])
-  visitorReport visitorReport[]
+  id           Int       @id @default(autoincrement())
+  checkInTime  DateTime  @db.Timestamptz(6)
+  checkOutTime DateTime? @db.Timestamptz(6)
+  latitude     Float?
+  longitude    Float?
+  photo        String?
+  otLocation   String?
+  userId       Int
+  user         User      @relation(fields: [userId], references: [id])
 
   @@index([userId])
 }
 
 model visitorReport {
-  id             Int      @id @default(autoincrement())
-  visitorName    String
-  visitorPhone   String
-  visitorAddress String
-  visitorNeeds   String
-  visitorDealing String
-  visitorTrackId String?
-  createdAt      DateTime @default(now())
+  id                  Int      @id @default(autoincrement())
+  visitorName         String
+  visitorPhone        String
+  visitorAddress      String
+  visitorNeeds        String
+  visitorDealing      String
+  visitorTrackId      String?
+  createdAt           DateTime @default(now())
+  userId              Int?
+  user                User?    @relation(fields: [userId], references: [id])
 
-  userAttendanceId Int?
-  userAttendance   userAttendance? @relation(fields: [userAttendanceId], references: [id])
-
-  @@index([userAttendanceId])
+  @@index([userId])
 }
 
 model dailyReport {
   id           Int    @id @default(autoincrement())
   visitorCount Int
   journal      String
-
-  User                User?              @relation(fields: [userId], references: [id])
-  userId              Int?
+  userId       Int?
+  User         User?  @relation(fields: [userId], references: [id])
 
   @@index([userId])
 }

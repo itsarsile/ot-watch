@@ -1,10 +1,11 @@
 import NextAuth, { NextAuthOptions, Session } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import 'dotenv/config'
+import "dotenv/config";
 
 export const authOptions: NextAuthOptions = {
   pages: {
-    signIn: "/auth/login",
+    signIn: "/",
+    error: "/auth/error",
   },
   session: {
     strategy: "jwt",
@@ -12,7 +13,7 @@ export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
       // The name to display on the sign in form (e.g. 'Sign in with...')
-      name: "Credentials",
+      name: "credentials",
       // The credentials is used to generate a suitable form on the sign in page.
       // You can specify whatever fields you are expecting to be submitted.
       // e.g. domain, username, password, 2FA token, etc.
@@ -28,35 +29,38 @@ export const authOptions: NextAuthOptions = {
         // e.g. return { id: 1, name: 'J Smith', email: 'jsmith@example.com' }
         // You can also use the `req` object to obtain additional parameters
         // (i.e., the request IP address)
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/login`, {
-          method: "POST",
-          body: JSON.stringify({
-            username: credentials?.username,
-            password: credentials?.password,
-          }),
-          headers: { "Content-Type": "application/json" },
-        });
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/auth/login`,
+          {
+            method: "POST",
+            body: JSON.stringify({
+              username: credentials?.username,
+              password: credentials?.password,
+            }),
+            headers: { "Content-Type": "application/json" },
+          }
+        );
 
         const user = await res.json();
 
         // If no error and we have user data, return it
-        if (res.ok && user) {
+        if (user) {
           return user;
+        } else {
+          // Return null if user data could not be retrieved
+          return null;
         }
-        // Return null if user data could not be retrieved
-        return null;
       },
     }),
   ],
   callbacks: {
     async jwt({ token, user }) {
-
       if (user) {
-        const u = user as unknown as any
-        
+        const u = user as unknown as any;
+
         return {
           ...token,
-          id: u.user.id, 
+          id: u.user.id,
           name: u.user.name,
           username: u.user.username,
           role: u.user.role,
@@ -69,17 +73,17 @@ export const authOptions: NextAuthOptions = {
     // If you want to use the role in client components
     async session({ session, token }) {
       return {
-        ...session, 
-          user: {
-            ...session.user,
-            id: token.id,
-            role: token.role,
-            username: token.username,
-            name: token.name,
-            kcontact: token.kcontact,
-            nik: token.nik
-          }
-        }
+        ...session,
+        user: {
+          ...session.user,
+          id: token.id,
+          role: token.role,
+          username: token.username,
+          name: token.name,
+          kcontact: token.kcontact,
+          nik: token.nik,
+        },
+      };
     },
   },
 };

@@ -10,6 +10,7 @@ import { HoverCardTrigger } from "@/components/ui/hover-card";
 import { Phone } from "lucide-react";
 import useSWR from "swr";
 import { fetcher } from "@/lib/fetcher";
+import Image from "next/image";
 
 export const MapsComponents = () => {
   const { data, isLoading, error } = useSWR(
@@ -84,7 +85,7 @@ export const MapsComponents = () => {
                 {attendance.latitude}, {attendance.longitude}
               </div>
               <Divider my={5} />
-              <img
+              <Image
                 src={attendance.photo}
                 width="100"
                 height="50"
@@ -96,19 +97,10 @@ export const MapsComponents = () => {
       </HoverCard>
     ));
 
-  const handleClick = (event: MapLayerMouseEvent) => {
-    let lngLat = event.lngLat;
-    console.log(
-      "🚀 ~ file: maps.components.tsx:9 ~ handleClick ~ lngLat:",
-      lngLat
-    );
-  };
-
   return (
     <>
       <Map
         doubleClickZoom={false}
-        onDblClick={handleClick}
         initialViewState={{
           latitude: -6.277454481086592,
           longitude: 106.66200115221575,

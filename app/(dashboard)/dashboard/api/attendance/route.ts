@@ -9,10 +9,10 @@ export async function GET(request: Request) {
   try {
     const session = await getServerSession(authOptions);
 
-    if (!session?.user) return NextResponse.json({message: 'Unauthorized'}, { status: 401 })
+    if (!session?.user)
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
 
     const userId = session?.user.id;
-    console.log("🚀 ~ file: route.ts:15 ~ GET ~ userId:", userId)
 
     const currentDate = new Date()
       .toLocaleString("en-US", { timeZone: "Asia/Jakarta" })
@@ -24,15 +24,11 @@ export async function GET(request: Request) {
         checkOutTime: userAttendance.checkOutTime,
       })
       .from(userAttendance)
-      .where(eq(userAttendance.userId, Number(userId)))
-      
-    console.log("🚀 ~ file: route.ts:27 ~ GET ~ attendanceRecord:", attendanceRecord)
-
+      .where(eq(userAttendance.userId, Number(userId)));
 
     const parsedCheckInTime = new Date(attendanceRecord[0].checkInTime)
-    .toLocaleString("en-US", { timeZone: "Asia/Jakarta" })
-    .split(",")[0];
-
+      .toLocaleString("en-US", { timeZone: "Asia/Jakarta" })
+      .split(",")[0];
 
     if (parsedCheckInTime === currentDate) {
       if (attendanceRecord[0].checkOutTime) {
@@ -47,7 +43,10 @@ export async function GET(request: Request) {
       );
     }
   } catch (error) {
-    return NextResponse.json({ message: "Error fetching current attendance" }, { status: 500 });
+    return NextResponse.json(
+      { message: "Error fetching current attendance" },
+      { status: 500 }
+    );
   }
 }
 
@@ -63,6 +62,6 @@ export async function PUT(request: Request) {
 
     return NextResponse.json({ res });
   } catch (error) {
-    console.error(error);
+    return NextResponse.json(error)
   }
 }

@@ -11,12 +11,14 @@ import {
   Title,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
+import { notifications } from "@mantine/notifications";
+import { Check, X } from "lucide-react";
 import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 function LoginForm() {
-
-
-  const [loading, setLoading] = useState(false)
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
 
   const form = useForm({
     initialValues: {
@@ -25,17 +27,32 @@ function LoginForm() {
     },
   });
   const handleLogin = form.onSubmit(async (values, _event) => {
+    _event.preventDefault();
     try {
-      setLoading(true)
-      _event.preventDefault();
-      await signIn("credentials", {
+      setLoading(true);
+
+      const res = await signIn("credentials", {
         username: values.username,
         password: values.password,
+        callbackUrl: "/",
       });
+
+      if (!res?.error) {
+        notifications.show({
+          message: "Login Berhasil",
+          icon: <Check />,
+          color: "green",
+        });
+      }
     } catch (error) {
-      console.error(error);
+      notifications.show({
+        message: "Error logging in",
+        icon: <X />,
+        color: "red",
+      });
+      setLoading(false);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   });
   return (
@@ -59,7 +76,11 @@ function LoginForm() {
                   placeholder="Masukkan password..."
                   required
                 />
-                <Button variant="default" type="submit" loading={loading ? true : false}>
+                <Button
+                  variant="default"
+                  type="submit"
+                  loading={loading ? true : false}
+                >
                   Login
                 </Button>
               </Stack>

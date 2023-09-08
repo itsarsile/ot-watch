@@ -80,7 +80,6 @@ export default function DashboardShell(props: { children: React.ReactNode }) {
       icon: IconMapPin,
       links: [
         { label: "Overview", link: `/dashboard/opentable` },
-        { label: "Daftar Lokasi", link: `/dashboard/opentable/list` },
       ],
     },
   ];
@@ -91,10 +90,6 @@ export default function DashboardShell(props: { children: React.ReactNode }) {
       icon: IconGauge,
       links: [
         { label: "Overview", link: `/dashboard/${data?.user?.username}` },
-        {
-          label: "Daily Report",
-          link: `/dashboard/dailyreport/${data?.user?.username}`,
-        },
       ],
     },
   ];

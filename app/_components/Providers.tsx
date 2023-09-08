@@ -1,23 +1,38 @@
 "use client";
-import { MantineProvider } from "@mantine/core";
+import { MantineProvider, useEmotionCache } from "@mantine/core";
+import { Notifications } from "@mantine/notifications";
 import { SessionProvider } from "next-auth/react";
 import { ThemeProvider as NextThemeProvider } from "next-themes";
 import { ReactNode } from "react";
-import { ModalsProvider } from '@mantine/modals'
+import { ModalsProvider } from "@mantine/modals";
+import { useServerInsertedHTML } from "next/navigation";
+import { CacheProvider } from "@emotion/react";
 interface ProvidersProps {
   children: ReactNode;
 }
 
 export default function Providers({ children }: ProvidersProps) {
+  const cache = useEmotionCache();
+  cache.compat = true;
+
+  useServerInsertedHTML(() => (
+    <style
+      data-emotion={`${cache.key} ${Object.keys(cache.inserted).join(" ")}`}
+      dangerouslySetInnerHTML={{
+        __html: Object.values(cache.inserted).join(" "),
+      }}
+    />
+  ));
   return (
-    <MantineProvider theme={{ colorScheme: "dark" }}>
-      <NextThemeProvider defaultTheme="dark" attribute="class" enableSystem>
-        <SessionProvider>
+    <NextThemeProvider defaultTheme="dark" attribute="class" enableSystem>
+      <CacheProvider value={cache}>
+        <MantineProvider theme={{ colorScheme: "dark" }} withGlobalStyles>
+          <Notifications />
           <ModalsProvider>
-          {children}
+            <SessionProvider>{children}</SessionProvider>
           </ModalsProvider>
-        </SessionProvider>
-      </NextThemeProvider>
-    </MantineProvider>
+        </MantineProvider>
+      </CacheProvider>
+    </NextThemeProvider>
   );
 }
