@@ -85,7 +85,7 @@ export const MapsComponents = () => {
                 {attendance.latitude}, {attendance.longitude}
               </div>
               <Divider my={5} />
-              <Image
+              <img
                 src={attendance.photo}
                 width="100"
                 height="50"
