@@ -88,26 +88,27 @@ model userAttendance {
 }
 
 model visitorReport {
-  id                  Int      @id @default(autoincrement())
-  visitorName         String
-  visitorPhone        String
-  visitorAddress      String
-  visitorNeeds        String
-  visitorDealing      String
-  visitorTrackId      String?
-  createdAt           DateTime @default(now())
-  userId              Int?
-  user                User?    @relation(fields: [userId], references: [id])
+  id             Int      @id @default(autoincrement())
+  visitorName    String
+  visitorPhone   String
+  visitorAddress String
+  visitorNeeds   String
+  visitorDealing String
+  visitorTrackId String?
+  createdAt      DateTime @default(now()) @db.Timestamptz()
+  userId         Int?
+  user           User?    @relation(fields: [userId], references: [id])
 
   @@index([userId])
 }
 
 model dailyReport {
-  id           Int    @id @default(autoincrement())
+  id           Int      @id @default(autoincrement())
   visitorCount Int
   journal      String
   userId       Int?
-  User         User?  @relation(fields: [userId], references: [id])
+  createdAt    DateTime @default(now()) @db.Timestamptz()
+  User         User?    @relation(fields: [userId], references: [id])
 
   @@index([userId])
 }

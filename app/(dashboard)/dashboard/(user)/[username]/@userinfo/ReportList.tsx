@@ -10,19 +10,24 @@ import {
 import { fetcher } from "@/lib/fetcher";
 import useSWR from "swr";
 import { columns } from "./_components/columns";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import React, { useState } from "react";
+import { DatePickerInput } from "@mantine/dates";
+import { Loader, rem } from "@mantine/core";
 
 export default function ReportList() {
-  const { data, isLoading, error } = useSWR("/api/visitor-reports", fetcher);
+  // const currentDate = new Date()
+  const [dateQuery, setDateQuery] = useState<Date | null>(null);
+  const { data, isLoading, isValidating, error } = useSWR(
+    dateQuery
+      ? `/api/visitor-reports?date=${dateQuery}`
+      : `/api/visitor-reports?`,
+    fetcher
+  );
 
   if (error) {
+    console.log("🚀 ~ file: ReportList.tsx:22 ~ ReportList ~ error:", error);
     return <div>Error loading data</div>;
   }
-
-  if (isLoading) {
-    return <div>Loading data...</div>;
-  }
-
 
   return (
     <Card>
@@ -31,7 +36,20 @@ export default function ReportList() {
         <CardDescription>Daftar laporan pengujung terkini!</CardDescription>
       </CardHeader>
       <CardContent>
+        <DatePickerInput
+        maw={rem(250)}
+          label="Pilih Tanggal"
+          value={dateQuery}
+          clearable
+          onChange={setDateQuery}
+          placeholder="Lihat data berdasarkan tanggal..."
+          className="mb-5"
+        />
+        {isLoading ? (
+          <Loader className="mx-auto" />
+        ) : (
           <DataTable columns={columns} data={data} />
+        )}
       </CardContent>
     </Card>
   );

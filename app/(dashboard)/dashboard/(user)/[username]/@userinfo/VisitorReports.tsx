@@ -11,16 +11,18 @@ import {
 import { Group, Radio, Select, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
+import { useRouter } from "next/navigation";
 import { mutate } from "swr";
 
 function VisitorReports({ userId }: { userId: number }) {
+  const router = useRouter()
   const form = useForm({
     initialValues: {
       visitorName: "",
       visitorPhone: "",
       visitorNeeds: "",
       visitorDealing: "",
-      visitorTrackID: "",
+      visitorTrackId: "",
       visitorAddress: "",
       visitorOtherNeeds: "",
     },
@@ -51,6 +53,8 @@ function VisitorReports({ userId }: { userId: number }) {
           color: "green",
         });
         mutate('/api/visitor-reports')
+        router.refresh()
+
       }
       form.reset();
     } catch (error) {
@@ -127,7 +131,7 @@ function VisitorReports({ userId }: { userId: number }) {
                 required
                 label="Track ID Pelanggan"
                 placeholder="Masukkan Track ID Pelanggan"
-                {...form.getInputProps("visitorTrackID")}
+                {...form.getInputProps("visitorTrackId")}
               />
             )}
 

@@ -57,7 +57,7 @@ function LoginForm() {
   });
   return (
     <Center className="h-screen">
-      <Paper className="p-5 w-96">
+      <Paper className="p-5 w-96" withBorder>
         <Stack>
           <Title order={4}>Selamat datang di OT-WATCH</Title>
           <Divider />

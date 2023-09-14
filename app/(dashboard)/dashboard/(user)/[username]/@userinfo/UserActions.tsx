@@ -62,8 +62,8 @@ export const UserActions = ({ userData, checkAttend }: any) => {
     }
   };
   const handleDailyReport = () => {
-    console.log('Hello from handle daily report!')
-  }
+    console.log("Hello from handle daily report!");
+  };
   return (
     <>
       <UserAttendanceModal opened={opened} close={close} userData={userData} />
@@ -103,18 +103,22 @@ export const UserActions = ({ userData, checkAttend }: any) => {
               </Button>
             </>
           )}
-          <Button onClick={() => {
-            modals.open({
-              title: "Laporan Harian",
-              children: (
-                <>
-                  Hello
-                  <Button onClick={handleDailyReport}>Click me to console log</Button>
-                </>
-              )
-            })
-          }}>
-            <Newspaper className="w-4 h-4 mr-4"/>
+          <Button
+            onClick={() => {
+              modals.open({
+                title: "Laporan Harian",
+                children: (
+                  <>
+                    Hello
+                    <Button onClick={handleDailyReport}>
+                      Click me to console log
+                    </Button>
+                  </>
+                ),
+              });
+            }}
+          >
+            <Newspaper className="w-4 h-4 mr-4" />
             Laporan Harian
           </Button>
         </CardContent>
@@ -135,6 +139,7 @@ const UserAttendanceModal = ({
   userData,
 }: IUserAttendanceModal) => {
   const router = useRouter();
+  const [submit, isSubmitting] = useState(false);
   const [location, setLocation] = useState({
     latitude: 0,
     longitude: 0,
@@ -142,11 +147,12 @@ const UserAttendanceModal = ({
   const [address, setAddress] = useState("");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [disableSubmit, setDisableSubmit] = useState(false);
-  const currentDate = new Date().toUTCString()
+  const currentDate = new Date().toUTCString();
 
   const handleSubmit = async () => {
     if (imageFile && location.latitude !== 0 && location.longitude !== 0) {
       try {
+        isSubmitting(true);
         let selfiePublicUrl;
         const { data, error } = await supabase.storage
           .from("selfie")
@@ -189,6 +195,7 @@ const UserAttendanceModal = ({
           console.log("success submitting attendance");
         }
       } catch (error) {
+        isSubmitting(false);
         console.error(error);
       }
 
@@ -268,9 +275,15 @@ const UserAttendanceModal = ({
         />
         {imageFile && (
           <div className="mt-5">
-            <Button onClick={handleSubmit} disabled={disableSubmit}>
-              Submit
-            </Button>
+            {submit ? (
+              <Button disabled={true}>
+                Submitting...
+              </Button>
+            ) : (
+              <Button onClick={handleSubmit} disabled={disableSubmit}>
+                Submit
+              </Button>
+            )}
           </div>
         )}
       </Modal>
@@ -353,14 +366,12 @@ const SelfieComponent = ({
   );
 };
 
-const DailyReportModal = ({opened, close}: Disclosure) => {
+const DailyReportModal = ({ opened, close }: Disclosure) => {
   return (
     <Modal opened={opened} onClose={close} title="Laporan Harian">
-      <form>
-
-      </form>
+      <form></form>
     </Modal>
-  )
-}
+  );
+};
 
 export default UserActions;

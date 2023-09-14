@@ -1,0 +1,5 @@
+-- AlterTable
+ALTER TABLE "dailyReport" ADD COLUMN     "createdAt" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP;
+
+-- AlterTable
+ALTER TABLE "visitorReport" ALTER COLUMN "createdAt" SET DATA TYPE TIMESTAMPTZ;

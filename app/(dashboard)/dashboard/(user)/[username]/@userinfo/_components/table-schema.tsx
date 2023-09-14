@@ -8,6 +8,7 @@ export const visitorReportSchema = z.object({
     visitorNeeds: z.string(),
     visitorDealing: z.string(),
     visitorTrackId: z.string().optional(),
+    createdAt: z.date(),
 })
 
 export type visitorReport = z.infer<typeof visitorReportSchema>

@@ -162,6 +162,14 @@ export const EditUserModal = ({ opened, close, userData }: IEditUser) => {
     }
   });
 
+  const onSubmit = form.onSubmit((values) => {
+    try {
+      const res = fetch("/api")
+    } catch (error) {
+      
+    }
+  })
+
 
  
   return (

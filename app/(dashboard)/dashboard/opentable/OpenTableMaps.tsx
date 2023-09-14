@@ -1,6 +1,6 @@
 "use client";
 
-import { Divider, HoverCard, Stack, Title } from "@mantine/core";
+import { Divider, HoverCard, Loader, Stack, Title } from "@mantine/core";
 import { IconPin, IconPinFilled } from "@tabler/icons-react";
 import React, { forwardRef, useMemo } from "react";
 import Map, { MapLayerMouseEvent, Marker } from "react-map-gl/maplibre";
@@ -19,7 +19,7 @@ export const MapsComponents = () => {
   );
 
   if (isLoading) {
-    return <div>Loading marker...</div>;
+    return <Loader className="h-screen mx-auto" />;
   }
 
   const todayAttendances: any[] = data?.todayAttendances;

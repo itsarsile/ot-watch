@@ -37,7 +37,7 @@ export async function GET() {
       LEFT JOIN ${superVisorProfile} on ${userAttendance.userId} = ${superVisorProfile.userId}
       WHERE 
       "checkInTime" at time zone 'UTC+7' >= current_date at time zone 'UTC+7'
-      and "checkInTime" at time zone 'UTC+7' < (current_date + interval '1 day') at time zone 'UTC+7'
+      and "checkInTime" at time zone 'UTC+7' < (current_date + interval '1 day') at time zone 'UTC+7  '
     `);
 
     return NextResponse.json({

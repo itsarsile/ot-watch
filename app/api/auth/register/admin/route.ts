@@ -29,6 +29,7 @@ export async function POST(request: Request) {
       { status: 201, statusText: "Success" }
     );
   } catch (error) {
+    console.log("🚀 ~ file: route.ts:32 ~ POST ~ error:", error)
     return NextResponse.json({ error: "Internal server error" });
   }
 }
