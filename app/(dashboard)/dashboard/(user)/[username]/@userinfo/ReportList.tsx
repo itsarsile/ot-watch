@@ -23,9 +23,9 @@ export default function ReportList() {
       : `/api/visitor-reports?`,
     fetcher
   );
+  console.log("🚀 ~ file: ReportList.tsx:21 ~ ReportList ~ data:", data)
 
   if (error) {
-    console.log("🚀 ~ file: ReportList.tsx:22 ~ ReportList ~ error:", error);
     return <div>Error loading data</div>;
   }
 

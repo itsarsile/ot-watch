@@ -15,7 +15,7 @@ import { useRouter } from "next/navigation";
 import { mutate } from "swr";
 
 function VisitorReports({ userId }: { userId: number }) {
-  const router = useRouter()
+  const router = useRouter();
   const form = useForm({
     initialValues: {
       visitorName: "",
@@ -26,24 +26,43 @@ function VisitorReports({ userId }: { userId: number }) {
       visitorAddress: "",
       visitorOtherNeeds: "",
     },
+    validateInputOnBlur: true,
+    validate: {
+      visitorName: (value) =>
+        value.length < 1 ? "Nama pengunjung wajib diisi" : null,
+      visitorPhone: (value) =>
+        value.length < 1 ? "Nomor pengunjung wajib diisi" : null,
+      visitorAddress: (value) =>
+        value.length < 1 ? "Alamat pengunjung wajib diisi" : null,
+      visitorDealing: (value) =>
+        value.length < 1 ? "Jenis dealing pengunjung wajib diisi" : null,
+      visitorNeeds: (value) =>
+        value.length < 1 ? "Kebutuhan pengunjung wajib diisi" : null,
+      visitorOtherNeeds: (value) =>
+        value.length < 1 ? "Kebutuhan pengunjung wajib diisi" : null,
+      visitorTrackId: (value, values) => {
+        if (values.visitorDealing === "dealing") {
+          return value.length < 1 ? "Track ID pengunjung wajib diisi" : null
+        }
+        return null
+      }
+    },
   });
-
-  
 
   const handleSubmit = form.onSubmit(async (values, _event) => {
     _event.preventDefault();
     try {
-      const finalVisitorNeeds = 
-    values.visitorNeeds === "other"
-      ? values.visitorOtherNeeds
-      : values.visitorNeeds
+      const finalVisitorNeeds =
+        values.visitorNeeds === "other"
+          ? values.visitorOtherNeeds
+          : values.visitorNeeds;
 
       const response = await fetch("/api/visitor-reports", {
         method: "POST",
         body: JSON.stringify({
           ...values,
           userId: userId,
-          visitorNeeds: finalVisitorNeeds
+          visitorNeeds: finalVisitorNeeds,
         }),
       });
 
@@ -52,9 +71,8 @@ function VisitorReports({ userId }: { userId: number }) {
           message: "Kunjungan pelanggan terlaporkan!",
           color: "green",
         });
-        mutate('/api/visitor-reports')
-        router.refresh()
-
+        mutate("/api/visitor-reports");
+        router.refresh();
       }
       form.reset();
     } catch (error) {

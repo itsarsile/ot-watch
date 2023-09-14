@@ -4,6 +4,8 @@ import {
   CategoryScale,
   ChartData,
   Chart as ChartJS,
+  ChartOptions,
+  CoreChartOptions,
   Legend,
   LinearScale,
   Title,
@@ -14,6 +16,13 @@ import useSWR from "swr";
 
 import { Bar } from "react-chartjs-2";
 import { fetcher } from "@/lib/fetcher";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 ChartJS.register(
   CategoryScale,
@@ -23,6 +32,38 @@ ChartJS.register(
   Tooltip,
   Legend
 );
+
+const options: ChartOptions<"bar"> = {
+  scales: {
+    x: {   
+      stacked: true,
+      grid: {
+        color: "rgba(165,216,255, 0.5)",
+      },
+    },
+    y: {
+      stacked: true,
+      grid: {
+        color: "#a5d8ff",
+      },
+      ticks: {
+        precision: 0,
+      }
+    },
+  },
+  color: "#fff",
+  elements: {
+    bar:{
+      backgroundColor: (context) => {
+        if (context.dataset.label === 'Prospek') {
+          return "#b1cfff"
+        } else if (context.dataset.label === 'Dealing') {
+          return "#1a71ff"
+        }
+      }
+    } 
+  }
+};
 
 export default function ProspekView() {
   const {
@@ -45,6 +86,7 @@ export default function ProspekView() {
   const labels = prospek.response.map((item: any) =>
     formatDate(item.tgl_laporan)
   );
+
   const prospekData = prospek.response.map((item: any) => item.prospek);
 
   const dealingData = prospek.response.map((item: any) => item.dealing);
@@ -53,34 +95,33 @@ export default function ProspekView() {
     labels: labels,
     datasets: [
       {
-        label: "Prospek",
-        data: prospekData,
-        backgroundColor: "#DAD4B5",
-      },
-      {
         label: "Dealing",
         data: dealingData,
-        backgroundColor: "#A73121",
+        borderRadius: 5,
       },
+      {
+        label: "Prospek",
+        data: prospekData,
+        borderRadius: 5,
+
+      },
+
     ],
   };
+  
   return (
     <div>
-      <Bar
-        options={{
-          color: "#ffff",
-          borderColor: "#ffff",
-          scales: {
-            x: {
-              stacked: true,
-            },
-            y: {
-              stacked: true,
-            },
-          },
-        }}
-        data={data}
-      />
+      <Card>
+        <CardHeader>
+          <CardTitle>Jenis Dealing</CardTitle>
+          <CardDescription>
+            Prospek atau dealing dalam 30 hari terakhir
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Bar options={options} data={data} />
+        </CardContent>
+      </Card>
     </div>
   );
 }

@@ -1,10 +1,16 @@
 import { db } from "@/drizzle/db";
 import { visitorReport } from "@/drizzle/schema";
 import { sql } from "drizzle-orm";
+import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
+import { authOptions } from "../../auth/[...nextauth]/route";
 
 export async function GET() {
   try {
+    const session = await getServerSession(authOptions)
+    if (session?.user.role !== 'ADMIN') {
+      return NextResponse.json({ message: "Unauthorized" })
+    }
     const data = await db.execute(sql`
       select
         DATE_TRUNC('day', ${visitorReport.createdAt}) as tgl_laporan,

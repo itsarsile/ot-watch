@@ -46,9 +46,9 @@ export async function GET(request: Request) {
     const {searchParams} = new URL(request.url)
     const dateQueryString = searchParams.get("date")
     const userId = session?.user.id;
+    console.log("🚀 ~ file: route.ts:49 ~ GET ~ userId:", userId)
     const dateQuery =  dateQueryString && new Date(dateQueryString).toISOString().split('T')[0]
     if (session) {
-
       let query = db
         .select()
         .from(visitorReport)
