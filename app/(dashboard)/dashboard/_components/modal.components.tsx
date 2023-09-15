@@ -169,8 +169,6 @@ export const EditUserModal = ({ opened, close, userData }: IEditUser) => {
       
     }
   })
-
-
  
   return (
     <Modal size="md" opened={opened} onClose={close} title="Edit User">

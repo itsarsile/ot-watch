@@ -26,27 +26,6 @@ function VisitorReports({ userId }: { userId: number }) {
       visitorAddress: "",
       visitorOtherNeeds: "",
     },
-    validateInputOnBlur: true,
-    validate: {
-      visitorName: (value) =>
-        value.length < 1 ? "Nama pengunjung wajib diisi" : null,
-      visitorPhone: (value) =>
-        value.length < 1 ? "Nomor pengunjung wajib diisi" : null,
-      visitorAddress: (value) =>
-        value.length < 1 ? "Alamat pengunjung wajib diisi" : null,
-      visitorDealing: (value) =>
-        value.length < 1 ? "Jenis dealing pengunjung wajib diisi" : null,
-      visitorNeeds: (value) =>
-        value.length < 1 ? "Kebutuhan pengunjung wajib diisi" : null,
-      visitorOtherNeeds: (value) =>
-        value.length < 1 ? "Kebutuhan pengunjung wajib diisi" : null,
-      visitorTrackId: (value, values) => {
-        if (values.visitorDealing === "dealing") {
-          return value.length < 1 ? "Track ID pengunjung wajib diisi" : null
-        }
-        return null
-      }
-    },
   });
 
   const handleSubmit = form.onSubmit(async (values, _event) => {
@@ -57,7 +36,7 @@ function VisitorReports({ userId }: { userId: number }) {
           ? values.visitorOtherNeeds
           : values.visitorNeeds;
 
-      const response = await fetch("/api/visitor-reports", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/visitor-reports`, {
         method: "POST",
         body: JSON.stringify({
           ...values,
@@ -152,7 +131,6 @@ function VisitorReports({ userId }: { userId: number }) {
                 {...form.getInputProps("visitorTrackId")}
               />
             )}
-
             <Button variant="default" type="submit">
               Submit
             </Button>

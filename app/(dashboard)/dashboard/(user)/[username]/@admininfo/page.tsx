@@ -1,14 +1,19 @@
 import React from "react";
 import ProspekView from "./ProspekView";
-import UserAttendancesView from "./UserAttendancesView";
+import VisitorNeedsView from "./VisitorNeedsView";
+import VisitorReports from "../@userinfo/VisitorReports";
+import ReportList from "../@userinfo/ReportList";
 function AdminInfoPage() {
   return (
-    <div className="flex flex-col lg:flex-row gap-5">
-      <div className="w-1/2">
+    <div className="grid lg:grid-cols-6 gap-5">
+      <div className="lg:col-span-3">
         <ProspekView />
       </div>
-      <div className="w-1/2">
-        <UserAttendancesView />
+      <div className="lg:col-span-3">
+        <VisitorNeedsView />
+      </div>
+      <div className="lg:col-span-6">
+      <ReportList />
       </div>
     </div>
   );

@@ -6,6 +6,7 @@ import {
   Chart as ChartJS,
   ChartOptions,
   CoreChartOptions,
+
   Legend,
   LinearScale,
   Title,
@@ -51,7 +52,7 @@ const options: ChartOptions<"bar"> = {
       }
     },
   },
-  color: "#fff",
+  color: "black",
   elements: {
     bar:{
       backgroundColor: (context) => {
@@ -70,7 +71,7 @@ export default function ProspekView() {
     data: prospek,
     isLoading,
     error,
-  } = useSWR("/api/dashboard/admin", fetcher);
+  } = useSWR("/api/dashboard/admin/prospek", fetcher);
   if (error) return <div>Error...</div>;
   if (isLoading) return <div>Loading...</div>;
 

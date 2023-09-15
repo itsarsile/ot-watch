@@ -24,9 +24,9 @@ export default function Providers({ children }: ProvidersProps) {
     />
   ));
   return (
-    <NextThemeProvider defaultTheme="dark" attribute="class" enableSystem>
+    <NextThemeProvider defaultTheme="light" attribute="class" enableSystem>
       <CacheProvider value={cache}>
-        <MantineProvider theme={{ colorScheme: "dark" }} withGlobalStyles>
+        <MantineProvider theme={{ colorScheme: "light" }} withGlobalStyles>
           <Notifications />
           <ModalsProvider>
             <SessionProvider>{children}</SessionProvider>
