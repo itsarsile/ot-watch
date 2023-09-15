@@ -146,6 +146,7 @@ const UserAttendanceModal = ({
   });
   const [address, setAddress] = useState("");
   const [imageFile, setImageFile] = useState<File | null>(null);
+  console.log("🚀 ~ file: UserActions.tsx:149 ~ imageFile:", imageFile)
   const [disableSubmit, setDisableSubmit] = useState(false);
   const currentDate = new Date().toUTCString();
 
@@ -155,7 +156,7 @@ const UserAttendanceModal = ({
         isSubmitting(true);
         let selfiePublicUrl;
         const { data, error } = await supabase.storage
-          .from("selfie")
+          .from("selfie/picture")
           .upload(imageFile.name, imageFile);
 
         if (error) {
@@ -164,7 +165,7 @@ const UserAttendanceModal = ({
 
         if (data) {
           selfiePublicUrl = await supabase.storage
-            .from("selfie")
+            .from("selfie/picture")
             .getPublicUrl(data?.path);
           console.log(
             "🚀 ~ file: UserActions.tsx:145 ~ handleSubmit ~ selfiePublicUrl:",
@@ -363,14 +364,6 @@ const SelfieComponent = ({
         </div>
       )}
     </div>
-  );
-};
-
-const DailyReportModal = ({ opened, close }: Disclosure) => {
-  return (
-    <Modal opened={opened} onClose={close} title="Laporan Harian">
-      <form></form>
-    </Modal>
   );
 };
 
