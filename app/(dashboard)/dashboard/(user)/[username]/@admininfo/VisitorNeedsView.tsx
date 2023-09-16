@@ -23,6 +23,8 @@ import useSWR from "swr";
 
 ChartJS.register(CategoryScale, Legend, Tooltip, LinearScale, BarElement);
 
+export const dynamic = "force-dynamic"
+
 export default function VisitorNeedsView() {
   const {
     data: needs,
@@ -45,10 +47,6 @@ export default function VisitorNeedsView() {
   };
 
   const labels = needs?.map((item: any) => formatDate(item.tgl_laporan));
-  console.log(
-    "🚀 ~ file: VisitorNeedsView.tsx:42 ~ VisitorNeedsView ~ labels:",
-    labels
-  );
   const keluhanData = needs?.map((item: any) => item.keluhan_pelanggan);
   const daftarData = needs?.map((item: any) => item.daftar_indihome);
   const pembelianOrbit = needs?.map((item: any) => item.pembelian_orbit);
