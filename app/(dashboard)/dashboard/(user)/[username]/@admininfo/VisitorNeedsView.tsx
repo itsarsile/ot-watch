@@ -17,7 +17,8 @@ import {
   LinearScale,
   Tooltip,
 } from "chart.js";
-import { DynamicOptions } from "next/dynamic";
+
+export const dynamic = 'force-dynamic'
 
 import { Bar } from "react-chartjs-2";
 import useSWR from "swr";
