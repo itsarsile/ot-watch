@@ -11,9 +11,9 @@ function AdminInfoPage() {
       <div className="lg:col-span-3">
         <ProspekView />
       </div>
-      <div className="lg:col-span-3">
+      {/* <div className="lg:col-span-3">
         <VisitorNeedsView />
-      </div>
+      </div> */}
       {/* <div className="lg:col-span-6">
         <ReportList />
       </div> */}
