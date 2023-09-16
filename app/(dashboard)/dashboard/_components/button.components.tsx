@@ -51,8 +51,8 @@ const AccountCreationButton = ({ supervisors }: { supervisors: [] }) => {
         close={close}
         supervisors={supervisors}
       />
-      <Card className="bg-blue-800" component="button" onClick={open}>
-        <Card.Section className="p-3 text-white">
+      <Card component="button" onClick={open} withBorder>
+        <Card.Section className="p-3">
           <Group>
             <IconUsers />
             Registrasi Akun SF / SPV

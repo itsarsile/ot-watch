@@ -19,15 +19,16 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useEffect, useState } from "react";
-import {useRouter} from 'next/navigation'
+import { useRouter } from "next/navigation";
 import useSWR, { mutate } from "swr";
+import { notifications } from "@mantine/notifications";
 export const SFRegistrationModal = ({
   opened,
   close,
   supervisors,
 }: ISFRegistrationModal) => {
   const [loading, setLoading] = useState(false);
-  const router = useRouter()
+  const router = useRouter();
   const initialFormValues = {
     username: "",
     password: "",
@@ -43,7 +44,7 @@ export const SFRegistrationModal = ({
   const form = useForm({
     initialValues: initialFormValues,
   });
-  
+
   const handleRegister = form.onSubmit(async (values, _event) => {
     _event.preventDefault();
     try {
@@ -53,8 +54,8 @@ export const SFRegistrationModal = ({
         body: JSON.stringify(values),
       });
       if (response.ok) {
-        mutate('/api/users')
-        router.refresh()
+        mutate("/api/users");
+        router.refresh();
       }
     } catch (error) {
       console.error(error);
@@ -65,7 +66,6 @@ export const SFRegistrationModal = ({
       close();
     }
   });
-
 
   return (
     <Modal opened={opened} onClose={close} size="lg" title="Registrasi Akun SF">
@@ -159,27 +159,46 @@ export const EditUserModal = ({ opened, close, userData }: IEditUser) => {
       agency: userData?.agency,
       phoneNumber: userData?.phoneNumber,
       kcontact: userData?.kcontact,
+    },
+  });
+
+  const onSubmit = form.onSubmit(async (values) => {
+    try {
+      const res = await fetch("/api/auth/register/sales", {
+        method: "PUT",
+        body: JSON.stringify({
+          ...values,
+          userId: userData.id
+        }),
+      });
+
+      if (res.ok) {
+        notifications.show({ message: "Sukses update data" })
+      }
+    } catch (error) {
+      notifications.show({ message: "Gagal update data" })
+      //@ts-ignore
+      console.error(error.message);
     }
   });
 
-  const onSubmit = form.onSubmit((values) => {
-    try {
-      const res = fetch("/api")
-    } catch (error) {
-      
-    }
-  })
- 
   return (
     <Modal size="md" opened={opened} onClose={close} title="Edit User">
-      <Stack>
-        <TextInput label="Nama" {...form.getInputProps("name")} />
-        <TextInput label="Branch" {...form.getInputProps("branch")} />
-        <TextInput label="Agency" {...form.getInputProps("agency")} />
-        <TextInput label="K-Contact" {...form.getInputProps("kcontact")} />
-        <TextInput label="Nomor Telp." {...form.getInputProps("phoneNumber")} />
-        <Button variant="default" className="bg-slate-600">Update User</Button>
-      </Stack>
+      <form onSubmit={onSubmit}>
+        <Stack>
+          <TextInput label="Nama" {...form.getInputProps("name")} />
+          <TextInput label="Branch" {...form.getInputProps("branch")} />
+          <TextInput label="Agency" {...form.getInputProps("agency")} />
+          <TextInput label="K-Contact" {...form.getInputProps("kcontact")} />
+          <TextInput
+            label="Nomor Telp."
+            {...form.getInputProps("phoneNumber")}
+          />
+          <Button variant="default" className="bg-slate-600">
+            Update User
+          </Button>
+        </Stack>
+      </form>
     </Modal>
   );
 };

@@ -22,9 +22,6 @@ import { DynamicOptions } from "next/dynamic";
 import { Bar } from "react-chartjs-2";
 import useSWR from "swr";
 
-export const dynamic: DynamicOptions = {
-  ssr: true,
-}
 
 ChartJS.register(CategoryScale, Legend, Tooltip, LinearScale, BarElement);
 

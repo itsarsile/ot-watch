@@ -89,7 +89,6 @@ export const columns: ColumnDef<Users>[] = [
             >
               Edit
             </DropdownMenuItem>
-            <DropdownMenuItem>View payment details</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );

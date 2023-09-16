@@ -83,3 +83,12 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Internal server error" });
   }
 }
+
+export async function PUT(request: Request) {
+  try {
+    const { name, branch, agency, kcontact, phoneNumber, userId } = await request.json()
+    
+  } catch (error) {
+    
+  }
+}

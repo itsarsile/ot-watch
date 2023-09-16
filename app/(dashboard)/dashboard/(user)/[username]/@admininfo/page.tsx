@@ -13,7 +13,7 @@ function AdminInfoPage() {
         <VisitorNeedsView />
       </div>
       <div className="lg:col-span-6">
-      <ReportList />
+        <ReportList />
       </div>
     </div>
   );
