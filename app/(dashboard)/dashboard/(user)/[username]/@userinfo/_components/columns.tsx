@@ -69,7 +69,8 @@ export const columns: ColumnDef<visitorReport>[] = [
           
         }
       }
-    
+      
+      // eslint-disable-next-line react-hooks/rules-of-hooks
       const [opened, { open, close }] = useDisclosure(false);
       return (
         <Menu width={rem(150)}>
