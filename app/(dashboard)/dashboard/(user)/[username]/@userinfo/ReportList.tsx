@@ -25,6 +25,7 @@ export default function ReportList() {
   );
 
   if (error) {
+    console.log("🚀 ~ file: ReportList.tsx:28 ~ ReportList ~ error:", error)
     return <div>Error loading data</div>;
   }
 

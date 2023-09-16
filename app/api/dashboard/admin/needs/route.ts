@@ -55,7 +55,6 @@ where
     tanya_seputar_produk: item.tanya_seputar_produk,
     pembelian_orbit: item.pembelian_orbit,
   }));
-    console.log("🚀 ~ file: route.ts:30 ~ GET ~ data:", data);
     return NextResponse.json(response);
   } catch (error) {
     //@ts-ignore

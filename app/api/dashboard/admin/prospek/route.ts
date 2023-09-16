@@ -37,7 +37,6 @@ const response = data.map((item: any) => ({
       response,
     });
   } catch (error) {
-    console.log("🚀 ~ file: route.ts:25 ~ GET ~ error:", error);
     return NextResponse.json(
       { message: "Error while fetching analytics" },
       { status: 500 }
