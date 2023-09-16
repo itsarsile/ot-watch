@@ -23,7 +23,6 @@ import useSWR from "swr";
 
 ChartJS.register(CategoryScale, Legend, Tooltip, LinearScale, BarElement);
 
-export const dynamic = "force-dynamic"
 
 export default function VisitorNeedsView() {
   const {
@@ -31,10 +30,7 @@ export default function VisitorNeedsView() {
     isLoading,
     error,
   } = useSWR("/api/dashboard/admin/needs", fetcher);
-  console.log(
-    "🚀 ~ file: VisitorNeedsView.tsx:27 ~ VisitorNeedsView ~ needs:",
-    needs
-  );
+
   if (error) return <div>Error...</div>;
   if (isLoading) return <div>Loading...</div>;
   const formatDate = (isoDate: string) => {
